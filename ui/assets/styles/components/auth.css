@@ -1,0 +1,230 @@
+/* Signed-out auth surface: gradient backdrop, glow accents, brand mark,
+   and the centered card. Demoed at /design under Patterns. */
+@layer components {
+  /* Auth surface
+   *
+   * Cool cyan/indigo gradient against a deep-slate backdrop. The card sits
+   * on top in surface-1 (token-driven) so light/dark mode follow the rest
+   * of the app while the page background stays cool-dark either way. */
+
+  .auth-page {
+    position: relative;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+    padding: var(--space-12) var(--space-5);
+    color: var(--color-zinc-100);
+    background:
+      radial-gradient(
+        1200px 600px at 50% -10%,
+        color-mix(in oklab, var(--color-info-500) 22%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 600px at 110% 110%,
+        color-mix(in oklab, var(--color-primary-700) 26%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        900px 600px at -10% 110%,
+        color-mix(in oklab, var(--color-emerald-700, var(--color-emerald-500)) 18%, transparent),
+        transparent 60%
+      ),
+      #0b0b14;
+    overflow: hidden;
+  }
+
+  .auth-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    mask-image: radial-gradient(ellipse at center, black 35%, transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .auth-glow {
+    position: absolute;
+    width: 36rem;
+    height: 36rem;
+    border-radius: 9999px;
+    filter: blur(80px);
+    opacity: 0.5;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .auth-glow.indigo {
+    top: -12rem;
+    right: -8rem;
+    background: radial-gradient(closest-side, var(--color-primary-500), transparent 70%);
+    animation:
+      auth-glow-in 1100ms var(--ease-out) 80ms both,
+      auth-drift 14s ease-in-out 1100ms infinite;
+  }
+  .auth-glow.cyan {
+    bottom: -16rem;
+    left: -10rem;
+    background: radial-gradient(closest-side, var(--color-info-500), transparent 70%);
+    animation:
+      auth-glow-in 1300ms var(--ease-out) 160ms both,
+      auth-drift 18s ease-in-out 1300ms infinite reverse;
+  }
+
+  @keyframes auth-drift {
+    0%,
+    100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(2rem, -1.5rem);
+    }
+  }
+  @keyframes auth-glow-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 0.5;
+    }
+  }
+  @keyframes auth-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .auth-glow,
+    .auth-card,
+    .brand-mark.glow::after {
+      animation: none;
+    }
+  }
+
+  .auth-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 24rem;
+    padding: 2.25rem 2rem 1.75rem;
+    border-radius: 1.125rem;
+    background: color-mix(in oklab, var(--surface-1) 94%, transparent);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    color: var(--text-1);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, white 14%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.5),
+      0 30px 60px -20px rgb(0 0 0 / 0.5),
+      0 0 90px -30px var(--color-primary-500);
+    animation: auth-card-in 600ms var(--ease-out) 120ms both;
+  }
+  @supports not (backdrop-filter: blur(1px)) {
+    .auth-card {
+      background: color-mix(in oklab, var(--surface-1) 96%, transparent);
+    }
+  }
+  @media (max-width: 480px) {
+    .auth-card {
+      padding: 1.75rem 1.25rem 1.25rem;
+      border-radius: 0.875rem;
+    }
+  }
+
+  .auth-brand {
+    display: flex;
+    justify-content: center;
+    margin-bottom: var(--space-5);
+  }
+  .brand-mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    background:
+      radial-gradient(
+        120% 120% at 30% 20%,
+        color-mix(in oklab, white 30%, transparent),
+        transparent 55%
+      ),
+      linear-gradient(
+        140deg,
+        var(--color-info-500) 0%,
+        var(--color-primary-600) 55%,
+        var(--color-primary-800) 100%
+      );
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.45),
+      inset 0 -8px 16px -8px rgb(0 0 0 / 0.35),
+      0 10px 24px -10px var(--color-primary-700),
+      0 0 0 1px color-mix(in oklab, white 12%, transparent);
+  }
+  .brand-mark.glow::after {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    border-radius: inherit;
+    background: radial-gradient(closest-side, var(--color-primary-400), transparent 70%);
+    opacity: 0.5;
+    filter: blur(10px);
+    z-index: -1;
+    animation: auth-ember 3.6s ease-in-out infinite;
+  }
+  @keyframes auth-ember {
+    0%,
+    100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.75;
+      transform: scale(1.06);
+    }
+  }
+
+  .auth-headline {
+    margin: 0 0 var(--space-1);
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    text-align: center;
+    color: var(--text-1);
+  }
+  .auth-subheadline {
+    margin: 0 0 var(--space-5);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .auth-field-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+
+  /* Auth-card helper line — the centered "Need access?" beat below the
+     submit button. Scoped to direct children so `field-hint`s rendered
+     inside a `<Field hint>` aren't affected. */
+  .auth-card > .field-hint {
+    margin-top: var(--space-4);
+    text-align: center;
+  }
+}

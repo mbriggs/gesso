@@ -1,0 +1,108 @@
+package ui
+
+templ Modal(p ModalProps) {
+	<dialog
+		class="modal"
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.TitleID != "" {
+			aria-labelledby={ p.TitleID }
+		}
+		data-ui-modal
+		if p.NoBackdropClose {
+			data-ui-modal-no-backdrop
+		}
+		if p.AutoOpen {
+			data-ui-modal-auto-open
+		}
+	>
+		<div class="modal-viewport">
+			<div class="modal-position">
+				<div class={ Class("modal-panel", modalSizeClass(p.Size)) }>
+					@modalChrome(p)
+					<div>
+						if p.Content != nil {
+							@p.Content
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</dialog>
+}
+
+templ modalChrome(p ModalProps) {
+	<div class="modal-chrome">
+		<h3
+			class="modal-title"
+			if p.TitleID != "" {
+				id={ p.TitleID }
+			}
+		>{ p.Title }</h3>
+		if p.HeaderActions != nil {
+			<div class="modal-actions">
+				@p.HeaderActions
+				@modalCloseButton()
+			</div>
+		} else {
+			@modalCloseButton()
+		}
+	</div>
+}
+
+templ modalCloseButton() {
+	<button type="button" class="modal-close" data-ui-modal-close>
+		<span class="sr-only">Close</span>
+		<svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" class="modal-close-icon">
+			<path fill-rule="evenodd" d="M4.28 4.28a.75.75 0 0 1 1.06 0L10 8.94l4.66-4.66a.75.75 0 1 1 1.06 1.06L11.06 10l4.66 4.66a.75.75 0 1 1-1.06 1.06L10 11.06l-4.66 4.66a.75.75 0 0 1-1.06-1.06L8.94 10 4.28 5.34a.75.75 0 0 1 0-1.06z" clip-rule="evenodd"></path>
+		</svg>
+	</button>
+}
+
+templ ModalBody(p ModalBodyProps) {
+	<div class={ Class("modal-body", p.Class) }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ ConfirmDialog(p ConfirmDialogProps) {
+	@Modal(ModalProps{
+		ID:       p.ID,
+		TitleID:  p.ID + "-title",
+		Title:    p.Title,
+		AutoOpen: p.AutoOpen,
+		Size:     ModalSizeMd,
+		Content:  confirmDialogBody(p),
+	})
+}
+
+templ confirmDialogBody(p ConfirmDialogProps) {
+	@ModalBody(ModalBodyProps{Content: confirmDialogInner(p)})
+}
+
+templ confirmDialogInner(p ConfirmDialogProps) {
+	if p.Description != "" || p.DescriptionContent != nil {
+		<p>@content(p.DescriptionContent, p.Description)</p>
+	}
+	<div class="form-actions modal">
+		@Button(ButtonProps{
+			Type:    "button",
+			Variant: "secondary",
+			Text:    stringDefault(p.CancelLabel, "Cancel"),
+			Attrs:   confirmDialogCancelAttrs(p),
+		})
+		@Button(ButtonProps{
+			Type:    confirmDialogConfirmType(p),
+			Variant: confirmDialogConfirmVariant(p),
+			Text:    stringDefault(p.ConfirmLabel, "Confirm"),
+			Form:    p.ConfirmForm,
+			Name:    p.ConfirmName,
+			Value:   p.ConfirmValue,
+			Loading: p.Busy,
+			Attrs:   p.ConfirmAttrs,
+		})
+	</div>
+}

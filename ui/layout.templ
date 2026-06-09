@@ -1,0 +1,118 @@
+package ui
+
+import templpkg "github.com/a-h/templ"
+
+templ Breadcrumbs(p BreadcrumbsProps) {
+	if len(p.Items) > 0 {
+		<ol class={ Class("breadcrumbs-list", p.Class) }>
+			for i, item := range p.Items {
+				{{ last := i == len(p.Items)-1 }}
+				<li class="breadcrumbs-li">
+					if !last && !item.Current && item.Href != "" {
+						<a class="breadcrumbs-item" href={ templpkg.SafeURL(item.Href) }>{ item.Label }</a>
+					} else {
+						<span class="breadcrumbs-item" aria-current="page">{ item.Label }</span>
+					}
+					if !last {
+						<span class="breadcrumbs-separator" aria-hidden="true">/</span>
+					}
+				</li>
+			}
+		</ol>
+	}
+}
+
+templ PageHeader(p PageHeaderProps) {
+	<header class={ Class("page-header", p.Class) }>
+		<div class="page-header-main">
+			if p.Breadcrumbs != nil {
+				@p.Breadcrumbs
+			}
+			if p.Eyebrow != nil {
+				@p.Eyebrow
+			}
+			<div class="page-header-title-row">
+				<h1 class="page-header-title">{ p.Title }</h1>
+				if p.Badges != nil {
+					<div class="page-header-badges">@p.Badges</div>
+				}
+			</div>
+			if p.Sub != "" {
+				<p class="page-header-sub">{ p.Sub }</p>
+			}
+		</div>
+		if p.Actions != nil {
+			<div class="page-header-actions">@p.Actions</div>
+		}
+	</header>
+}
+
+templ SectionHead(p SectionHeadProps) {
+	<header class="section-head">
+		<div class="section-title-group">
+			<h3 class="section-title">{ p.Title }</h3>
+			if p.Actions != nil {
+				<div class="section-actions">@p.Actions</div>
+			}
+		</div>
+		if p.Meta != "" {
+			<p class="section-meta">{ p.Meta }</p>
+		}
+	</header>
+}
+
+templ EmptyState(p EmptyStateProps) {
+	<div class={ Class("empty-state", stringDefault(p.Spacing, "default") + "-spacing", p.Class) }>
+		if p.Icon != nil {
+			@p.Icon
+		}
+		if p.Title != "" {
+			<p class="empty-state-title">{ p.Title }</p>
+		}
+		<p class={ Class("empty-state-message", ClassIf(p.Title == "", "no-title")) }>{ p.Message }</p>
+		if p.Action != nil {
+			<div class="empty-state-action">@p.Action</div>
+		}
+	</div>
+}
+
+templ EntityTileGrid(content templpkg.Component) {
+	<div class="entity-tile-grid">
+		if content != nil {
+			@content
+		}
+	</div>
+}
+
+templ EntityTile(p EntityTileProps) {
+	<div
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		class={ Class("entity-tile-wrap", p.WrapClass, ClassIf(p.Muted, "muted")) }
+	>
+		<a
+			href={ stringDefault(p.Href, "#") }
+			class={ Class("entity-tile", p.Class, ClassIf(p.Muted, "muted")) }
+			if p.Title != "" {
+				title={ p.Title }
+			}
+		>
+			<div class="entity-tile-head">
+				if p.Leading != nil {
+					@p.Leading
+				}
+				<span class="entity-tile-name">@content(p.Label, p.Text)</span>
+				if p.Tag != "" {
+					<span class="entity-tile-tag">{ p.Tag }</span>
+				}
+			</div>
+			if p.Meta != nil {
+				<div class="entity-tile-meta">@p.Meta</div>
+			}
+		</a>
+		if p.Actions != nil {
+			<div class="entity-tile-actions">@p.Actions</div>
+		}
+	</div>
+}

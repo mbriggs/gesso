@@ -1,0 +1,118 @@
+package ui
+
+templ TableFrame(p TableFrameProps) {
+	<div
+		class={ tableFrameClasses(p) }
+		if p.MaxHeight != "" {
+			style={ "max-height: " + p.MaxHeight }
+		}
+	>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ Table(p TableProps) {
+	<table class={ tableClasses(p) } { p.Attrs... }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</table>
+}
+
+templ Pagination(p PaginationProps) {
+	if p.Pages > 1 {
+		<div class={ paginationClasses(p) }>
+			if p.Info != nil || p.InfoText != "" {
+				<span class="pagination-info">@content(p.Info, p.InfoText)</span>
+			} else {
+				<span></span>
+			}
+			<nav class="pager-nav" aria-label="Pagination">
+				if p.Page > 1 {
+					<a href={ paginationHref(p, p.Page-1) } class="pager-link" aria-label="Previous">&lsaquo;</a>
+				} else {
+					<span class="pager-link" aria-disabled="true" aria-label="Previous">&lsaquo;</span>
+				}
+				for _, entry := range PaginationSeries(p.Page, p.Pages, paginationWindow(p)) {
+					if entry.Gap {
+						<span class="pager-gap" aria-hidden="true">&hellip;</span>
+					} else if entry.Number == p.Page {
+						<span class="pager-link" aria-current="page">{ paginationLabel(entry.Number) }</span>
+					} else {
+						<a href={ paginationHref(p, entry.Number) } class="pager-link">{ paginationLabel(entry.Number) }</a>
+					}
+				}
+				if p.Page < p.Pages {
+					<a href={ paginationHref(p, p.Page+1) } class="pager-link" aria-label="Next">&rsaquo;</a>
+				} else {
+					<span class="pager-link" aria-disabled="true" aria-label="Next">&rsaquo;</span>
+				}
+			</nav>
+		</div>
+	}
+}
+
+templ Tooltip(p TooltipProps) {
+	<div
+		class={ tooltipClasses(p) }
+		if !p.FocusableChild {
+			tabindex="0"
+		}
+		if p.DescribedByID != "" {
+			aria-describedby={ p.DescribedByID }
+		}
+	>
+		if p.Trigger != nil {
+			@p.Trigger
+		} else {
+			{ p.TriggerText }
+		}
+		<div
+			role="tooltip"
+			if p.DescribedByID != "" {
+				id={ p.DescribedByID }
+			}
+			class={ Class("tooltip-bubble", tooltipPosition(p)) }
+		>
+			<div class="tooltip-content">
+				@content(p.Text, p.TextString)
+				<div class={ Class("tooltip-arrow", tooltipPosition(p)) }>
+					<div class={ Class("tooltip-arrow-shape", tooltipPosition(p)) }></div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ StatusToggle(p StatusToggleProps) {
+	<label class={ statusToggleClasses(p) }>
+		<input
+			type="checkbox"
+			class="sr-only"
+			if p.Name != "" {
+				name={ p.Name }
+			}
+			if p.Value != "" {
+				value={ p.Value }
+			}
+			checked?={ p.Checked }
+			disabled?={ p.Disabled }
+			{ p.Attrs... }
+		/>
+		<span class="status-toggle-dot" aria-hidden="true"></span>
+		<span class="status-toggle-label">{ statusToggleLabel(p) }</span>
+	</label>
+}
+
+templ FloatingActionBar(p FloatingActionBarProps) {
+	<section class={ floatingActionBarClasses(p) }>
+		<div class="floating-action-bar-message">@content(p.Message, p.MessageText)</div>
+		<div class="floating-action-bar-actions">
+			if p.Actions != nil {
+				@p.Actions
+			}
+		</div>
+	</section>
+}

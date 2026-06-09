@@ -1,0 +1,88 @@
+package ui
+
+import "fmt"
+
+templ Combobox(p ComboboxProps) {
+	{{ id := stringDefault(p.ID, p.Name+"-combobox") }}
+	{{ listboxID := id + "-listbox" }}
+	{{ describedBy := comboboxDescribedBy(p) }}
+	{{ selectedLabel := comboboxSelectedLabel(p) }}
+	@Field(FieldProps{
+		Label:   p.Label,
+		ID:      id,
+		Hint:    p.Hint,
+		Error:   p.Error,
+		Half:    p.Half,
+		Class:   p.Class,
+		Control: comboboxControl(p, id, listboxID, describedBy, selectedLabel),
+	})
+}
+
+templ comboboxControl(p ComboboxProps, id, listboxID, describedBy, selectedLabel string) {
+	<div class="combobox" data-ui-combobox>
+		<input type="hidden" name={ p.Name } value={ p.Value } data-ui-combobox-value/>
+		<input
+			type="text"
+			id={ id }
+			value={ selectedLabel }
+			class="input"
+			role="combobox"
+			autocomplete="off"
+			aria-expanded="false"
+			aria-haspopup="listbox"
+			aria-controls={ listboxID }
+			aria-autocomplete="list"
+			if describedBy != "" {
+				aria-describedby={ describedBy }
+			}
+			if p.Required {
+				aria-required="true"
+			}
+			if p.Placeholder != "" {
+				placeholder={ p.Placeholder }
+			}
+			required?={ p.Required }
+			disabled?={ p.Disabled }
+			data-ui-combobox-input
+		/>
+		<ul
+			id={ listboxID }
+			role="listbox"
+			class="combobox-listbox hidden"
+			data-ui-combobox-listbox
+			if p.Label != "" {
+				aria-label={ p.Label }
+			} else if p.AriaLabel != "" {
+				aria-label={ p.AriaLabel }
+			} else {
+				aria-label="Options"
+			}
+		>
+			if p.IncludeBlank != "" {
+				<li
+					id={ fmt.Sprintf("%s-opt-blank", id) }
+					role="option"
+					data-ui-combobox-option
+					data-value=""
+					data-label={ p.IncludeBlank }
+					aria-selected={ boolString(p.Value == "") }
+					class={ Class("combobox-option", "blank") }
+				>{ p.IncludeBlank }</li>
+			}
+			for i, c := range p.Choices {
+				<li
+					id={ fmt.Sprintf("%s-opt-%d", id, i) }
+					role="option"
+					data-ui-combobox-option
+					data-value={ c.Value }
+					data-label={ c.Label }
+					aria-selected={ boolString(c.Value == p.Value) }
+					class="combobox-option"
+				>{ c.Label }</li>
+			}
+			<li role="presentation" class="combobox-empty" aria-disabled="true" data-ui-combobox-empty hidden>
+				{ stringDefault(p.EmptyMessage, "No matches") }
+			</li>
+		</ul>
+	</div>
+}

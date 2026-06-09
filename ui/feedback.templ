@@ -1,0 +1,61 @@
+package ui
+templ Alert(p AlertProps) {
+	<div role={ alertRole(p) } class={ alertClasses(p) }>
+		if p.Icon != nil || p.Title != "" {
+			<div class="alert-layout">
+				if p.Icon != nil {
+					<div class="alert-icon-wrap">@p.Icon</div>
+				}
+				<div class="alert-body">
+					if p.Title != "" {
+						<div class="alert-header"><p class="alert-title">{ p.Title }</p></div>
+					}
+					if p.Content != nil || p.Text != "" {
+						<div class="alert-content">@content(p.Content, p.Text)</div>
+					}
+				</div>
+			</div>
+		} else {
+			@content(p.Content, p.Text)
+		}
+	</div>
+}
+
+templ Badge(p BadgeProps) {
+	<span class={ badgeClasses(p) }>@content(p.Content, p.Text)</span>
+}
+
+templ TextMuted(text string, class string) {
+	<span class={ Class("muted", class) }>{ text }</span>
+}
+
+templ TextMono(text string, class string) {
+	<span class={ Class("mono", class) }>{ text }</span>
+}
+
+templ DisplayID(prefix string, id string, class string) {
+	<span class={ Class("display-id", class) }>{ prefix }{ id }</span>
+}
+
+templ StatusDot(tone Tone) {
+	<span class={ statusDotClasses(tone) } aria-hidden="true"></span>
+}
+
+templ Spinner(p SpinnerProps) {
+	<span role="status" aria-label={ stringDefault(p.Label, "Loading") } class={ Class("spinner-icon", "spinning", p.Class) }></span>
+}
+
+templ Progress(p ProgressProps) {
+	<span
+		role="progressbar"
+		aria-valuenow={ p.Value }
+		aria-valuemin="0"
+		aria-valuemax={ p.Total }
+		if p.Label != "" {
+			aria-label={ p.Label }
+		}
+		class={ progressClasses(p) }
+	>
+		<span class={ progressBarClasses(p) } style={ progressStyle(p.Value, p.Total) }></span>
+	</span>
+}

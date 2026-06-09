@@ -1,0 +1,55 @@
+/* Container-query overrides for shared components; imported after base
+   component rules. */
+@layer components {
+  @container (width >= 24rem) {
+    .card-header {
+      padding-left: var(--space-6);
+      padding-right: var(--space-6);
+    }
+    .card.padded {
+      padding: var(--space-6);
+    }
+    .modal-chrome {
+      padding-left: var(--space-6);
+      padding-right: var(--space-6);
+    }
+  }
+  @container (width >= 32rem) {
+    .pager-link:not([aria-label="Previous"]):not([aria-label="Next"]),
+    .pager-gap {
+      display: inline-flex;
+    }
+    .page {
+      padding-left: var(--space-6);
+      padding-right: var(--space-6);
+    }
+    .page-header-title {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
+    .page-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-6);
+    }
+    .page-header-actions {
+      flex-direction: row;
+      align-items: center;
+      column-gap: var(--space-3);
+      row-gap: 0;
+      margin-top: 0;
+      margin-left: var(--space-4);
+    }
+  }
+  @container (width >= 64rem) {
+    .page {
+      padding-left: var(--space-8);
+      padding-right: var(--space-8);
+    }
+    .page-header-title {
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
+  }
+}

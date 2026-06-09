@@ -1,0 +1,274 @@
+package ui
+templ Input(p InputProps) {
+	{{ describedBy := inputDescribedBy(p) }}
+	<input
+		class={ inputClasses(p) }
+		type={ stringDefault(p.Type, "text") }
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Form != "" {
+			form={ p.Form }
+		}
+		if p.Value != "" {
+			value={ p.Value }
+		}
+		if p.Placeholder != "" {
+			placeholder={ p.Placeholder }
+		}
+		if p.Autocomplete != "" {
+			autocomplete={ p.Autocomplete }
+		}
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		if describedBy != "" {
+			aria-describedby={ describedBy }
+		}
+		if p.Invalid || p.Error != "" {
+			aria-invalid="true"
+		}
+		required?={ p.Required }
+		autofocus?={ p.Autofocus }
+		disabled?={ p.Disabled }
+		{ p.Attrs... }
+	/>
+}
+
+templ Select(p SelectProps) {
+	{{ describedBy := selectDescribedBy(p) }}
+	<select
+		class={ selectClasses(p) }
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Form != "" {
+			form={ p.Form }
+		}
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		if describedBy != "" {
+			aria-describedby={ describedBy }
+		}
+		if p.Invalid || p.Error != "" {
+			aria-invalid="true"
+		}
+		required?={ p.Required }
+		disabled?={ p.Disabled }
+		{ p.Attrs... }
+	>
+		if p.Content != nil {
+			@p.Content
+		}
+	</select>
+}
+
+templ Textarea(p TextareaProps) {
+	{{ describedBy := textareaDescribedBy(p) }}
+	<textarea
+		class={ textareaClasses(p) }
+		if p.ID != "" {
+			id={ p.ID }
+		}
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Placeholder != "" {
+			placeholder={ p.Placeholder }
+		}
+		if p.AriaLabel != "" {
+			aria-label={ p.AriaLabel }
+		}
+		if describedBy != "" {
+			aria-describedby={ describedBy }
+		}
+		if p.Invalid || p.Error != "" {
+			aria-invalid="true"
+		}
+		required?={ p.Required }
+		disabled?={ p.Disabled }
+		{ p.Attrs... }
+	>{ p.Value }</textarea>
+}
+
+templ Checkbox(p CheckboxProps) {
+	<div class="check-field">
+		<input
+			type="checkbox"
+			class={ checkboxClasses(p) }
+			if p.ID != "" {
+				id={ p.ID }
+			}
+			if p.Name != "" {
+				name={ p.Name }
+			}
+			if p.Form != "" {
+				form={ p.Form }
+			}
+			if p.Value != "" {
+				value={ p.Value }
+			}
+			checked?={ p.Checked }
+			disabled?={ p.Disabled }
+			{ p.Attrs... }
+		/>
+		if p.Label != "" {
+			<label
+				class="field-label"
+				if p.ID != "" {
+					for={ p.ID }
+				}
+			>{ p.Label }</label>
+		}
+	</div>
+}
+
+templ Toggle(p ToggleProps) {
+	{{ describedBy := toggleDescribedBy(p) }}
+	<div class={ toggleFieldClasses(p) }>
+		<div class="toggle" data-ui-toggle>
+			<input
+				type="checkbox"
+				class="sr-only"
+				data-ui-toggle-input
+				aria-hidden="true"
+				tabindex="-1"
+				if p.ID != "" {
+					id={ p.ID }
+				}
+				if p.Name != "" {
+					name={ p.Name }
+				}
+				value={ stringDefault(p.Value, "1") }
+				checked?={ p.Checked }
+				disabled?={ p.Disabled }
+			/>
+			<button
+				type="button"
+				role="switch"
+				aria-checked={ boolString(p.Checked) }
+				if p.ID != "" {
+					aria-labelledby={ p.ID + "-label" }
+				}
+				if describedBy != "" {
+					aria-describedby={ describedBy }
+				}
+				class="toggle-switch"
+				data-ui-toggle-switch
+				disabled?={ p.Disabled }
+			>
+				<span class="toggle-slider"></span>
+			</button>
+			<div class="toggle-content">
+				if p.Label != "" {
+					<label
+						class="toggle-label"
+						if p.ID != "" {
+							for={ p.ID }
+							id={ p.ID + "-label" }
+						}
+					>{ p.Label }</label>
+				}
+				if p.Caption != "" {
+					<p class="toggle-caption">{ p.Caption }</p>
+				}
+			</div>
+		</div>
+		@FieldMessages(p.ID, p.Hint, p.Error)
+	</div>
+}
+
+templ Segmented(p SegmentedProps) {
+	{{ describedBy := segmentedDescribedBy(p) }}
+	<div class={ segmentedFieldClasses(p) } data-ui-segmented-field>
+		if p.Label != "" {
+			<span
+				class="field-label"
+				if p.ID != "" {
+					id={ p.ID + "-label" }
+				}
+			>{ p.Label }</span>
+		}
+		<div class="field-control">
+			<div
+				class="segmented"
+				role="radiogroup"
+				data-ui-segmented
+				if p.ID != "" && p.Label != "" {
+					aria-labelledby={ p.ID + "-label" }
+				}
+				if p.AriaLabel != "" {
+					aria-label={ p.AriaLabel }
+				}
+				if describedBy != "" {
+					aria-describedby={ describedBy }
+				}
+			>
+				if p.Name != "" {
+					<input type="hidden" name={ p.Name } value={ p.Value } data-ui-segmented-input/>
+				}
+				for _, choice := range p.Choices {
+					<button
+						type="button"
+						role="radio"
+						aria-checked={ boolString(choice.Value == p.Value) }
+						tabindex={ segmentedTabIndex(choice.Value == p.Value) }
+						class="segmented-option"
+						data-ui-segmented-option
+						value={ choice.Value }
+					>{ choice.Label }</button>
+				}
+			</div>
+		</div>
+		@FieldMessages(p.ID, p.Hint, p.Error)
+	</div>
+}
+
+templ FieldMessages(id string, hint string, err string) {
+	if hint != "" {
+		<p
+			if id != "" {
+				id={ id + "-hint" }
+			}
+			class="field-hint"
+		>{ hint }</p>
+	}
+	if err != "" {
+		<p
+			if id != "" {
+				id={ id + "-error" }
+			}
+			class="field-error"
+		>{ err }</p>
+	}
+}
+
+templ Field(p FieldProps) {
+	<div class={ fieldPropClasses(p) }>
+		if p.Label != "" {
+			<label
+				class="field-label"
+				if p.ID != "" {
+					for={ p.ID }
+				}
+			>{ p.Label }</label>
+		}
+		if p.Label != "" {
+			<div class="field-control">
+				if p.Control != nil {
+					@p.Control
+				}
+			</div>
+		} else if p.Control != nil {
+			@p.Control
+		}
+		@FieldMessages(p.ID, p.Hint, p.Error)
+	</div>
+}

@@ -1,0 +1,453 @@
+/* Data-display primitives in the shared components layer: tables, pagination,
+   entity tiles, badges, and options-editor affordances. */
+@layer components {
+  .table-frame {
+    container: table-frame / inline-size;
+    overflow: hidden;
+    border-radius: 0.5rem;
+    box-shadow:
+      0 1px 2px 0 color-mix(in oklab, var(--color-primary-500) 10%, transparent),
+      0 0 0 1px var(--border-strong);
+  }
+  .table {
+    min-width: 100%;
+    border-collapse: collapse;
+  }
+  .table.fixed {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+  }
+  .table thead {
+    background-color: var(--surface-2);
+  }
+  .table th {
+    color: var(--text-1);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    padding: var(--space-3_5) var(--space-3);
+  }
+  .table td {
+    color: var(--text-2);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    padding: var(--space-4) var(--space-3);
+    white-space: nowrap;
+  }
+  .table.wrap th,
+  .table.wrap td {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+  /* `<strong>` inside a data table renders the primary-identifier voice —
+     undoes the muted default of `.table td` and bumps weight. */
+  .table td strong {
+    color: var(--text-1);
+    font-weight: 500;
+  }
+  .table tbody > tr + tr {
+    border-top: 1px solid var(--border-1);
+  }
+  .table.data th {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    padding: var(--space-3);
+  }
+  .table.data tbody > tr + tr {
+    border-top-color: var(--surface-sunken);
+  }
+  .table.compact th {
+    padding-block: var(--space-2);
+  }
+  .table.compact tbody td {
+    padding: var(--space-1_5) var(--space-3);
+    vertical-align: middle;
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+  }
+  @container table-frame (width < 32rem) {
+    .table.compact th,
+    .table.compact tbody td {
+      padding-left: var(--space-2);
+      padding-right: var(--space-2);
+    }
+  }
+  .table-frame.scroll-y {
+    max-height: min(70vh, 42rem);
+    overflow-y: auto;
+  }
+  .table-frame.sticky-header .table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--surface-2);
+    box-shadow: inset 0 -1px 0 0 var(--border-1);
+  }
+  .table .align-left {
+    text-align: left;
+  }
+  .table .align-right {
+    text-align: right;
+  }
+  .table .align-center {
+    text-align: center;
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--space-4) var(--space-3);
+    background-color: var(--surface-1);
+  }
+  .pagination.bordered {
+    border-top: 1px solid var(--border-1);
+  }
+  .pagination-info {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .pager-nav {
+    isolation: isolate;
+    display: inline-flex;
+    margin-left: -1px;
+    border-radius: 0.375rem;
+  }
+  .pager-link,
+  .pager-gap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-2) var(--space-4);
+    color: var(--text-1);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: inset 0 0 0 1px var(--border-strong);
+  }
+  .pager-link:not([aria-label="Previous"]):not([aria-label="Next"]),
+  .pager-gap {
+    display: none;
+  }
+  a.pager-link:hover {
+    background-color: var(--surface-2);
+  }
+  a.pager-link:focus-visible {
+    z-index: 11;
+    outline: none;
+    box-shadow:
+      inset 0 0 0 1px var(--border-strong),
+      var(--focus-ring);
+  }
+  .pager-link[aria-label="Previous"],
+  .pager-link[aria-label="Next"] {
+    padding-left: var(--space-2);
+    padding-right: var(--space-2);
+    color: var(--text-muted);
+  }
+  .pager-link[aria-current="page"] {
+    z-index: 10;
+    color: var(--color-primary-600);
+    background-color: var(--color-primary-50);
+    box-shadow: inset 0 0 0 1px var(--color-primary-300);
+  }
+  .pager-gap {
+    color: var(--text-2);
+    cursor: default;
+  }
+  .pager-link[aria-disabled="true"] {
+    color: var(--border-strong);
+    cursor: not-allowed;
+  }
+  .pager-nav > :first-child {
+    border-top-left-radius: 0.375rem;
+    border-bottom-left-radius: 0.375rem;
+  }
+  .pager-nav > :last-child {
+    border-top-right-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+
+  .entity-tile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: var(--space-3);
+  }
+  .entity-tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3) var(--space-4);
+    background-color: var(--surface-1);
+    border: 1px solid var(--border-1);
+    border-radius: 0.5rem;
+    color: inherit;
+    text-decoration: none;
+    transition:
+      background-color 150ms,
+      border-color 150ms,
+      transform 150ms;
+  }
+  .entity-tile:hover {
+    background-color: var(--surface-2);
+    border-color: var(--border-strong);
+  }
+  .entity-tile:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  .entity-tile-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .entity-tile-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--text-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .entity-tile-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1_5);
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    line-height: 1rem;
+    padding-left: calc(0.5rem + var(--space-2));
+  }
+  .entity-tile-wrap {
+    position: relative;
+  }
+  .entity-tile-actions {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    z-index: 2;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 120ms ease;
+  }
+  .entity-tile-wrap:hover .entity-tile-actions,
+  .entity-tile-actions:focus-within {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .entity-tile.muted .entity-tile-name,
+  .entity-tile.muted .entity-tile-meta {
+    color: var(--text-muted);
+  }
+  .entity-tile.muted .entity-tile-name {
+    font-weight: 400;
+  }
+  .entity-tile.muted:hover .entity-tile-name {
+    color: var(--text-1);
+  }
+  .entity-tile-tag {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    padding: 0 var(--space-1_5);
+    border: 1px solid var(--border-1);
+    border-radius: 999px;
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+
+  /* MenuValue — non-interactive informational value under a MenuLabel. */
+  .menu-value {
+    padding: 0.125rem var(--space-2) 0.375rem;
+    color: var(--text-1);
+    font-size: 0.8125rem;
+  }
+
+  .summary-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-8);
+    margin: var(--space-4) 0 var(--space-5);
+    padding: var(--space-3) 0;
+    border-top: 1px solid var(--border-1);
+    border-bottom: 1px solid var(--border-1);
+  }
+  .summary-list-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-0_5);
+    min-width: 0;
+  }
+  .summary-list-term {
+    color: var(--text-muted);
+    font-size: 0.6875rem;
+    line-height: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    margin: 0;
+  }
+  .summary-list-details {
+    margin: 0;
+    color: var(--text-1);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+  }
+
+  .floating-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--surface-1);
+    border: 1px solid var(--border-strong);
+    border-radius: 0.5rem;
+    z-index: 6;
+  }
+  .floating-action-bar.sticky {
+    position: sticky;
+    bottom: var(--space-4);
+  }
+  .floating-action-bar.warning {
+    border-color: var(--color-warning-500);
+    box-shadow: 0 8px 24px -8px color-mix(in oklab, var(--color-warning-500) 25%, transparent);
+  }
+  html.is-dark .floating-action-bar.warning {
+    border-color: var(--color-warning-400);
+    box-shadow: 0 8px 24px -8px color-mix(in oklab, var(--color-warning-400) 35%, transparent);
+  }
+  .floating-action-bar-message {
+    color: var(--text-1);
+    font-size: 0.875rem;
+  }
+  .floating-action-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .editable-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .editable-grid-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .editable-grid-body {
+    min-width: 0;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.375rem;
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    box-shadow: inset 0 0 0 1px var(--badge-ring-color, rgb(0 0 0 / 0.05));
+  }
+
+  /* Monospace identifier label — small, muted, fits inline with prose.
+   * Use for the short displayable form of a record id (e.g. "J42"). */
+  .display-id {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .badge.pill {
+    border-radius: 9999px;
+  }
+  .badge.default {
+    color: var(--color-zinc-600);
+    background-color: var(--color-zinc-50);
+    --badge-ring-color: color-mix(in oklab, var(--color-zinc-500) 10%, transparent);
+  }
+  .badge.purple {
+    color: var(--color-purple-700);
+    background-color: var(--color-purple-50);
+    --badge-ring-color: color-mix(in oklab, var(--color-purple-600) 20%, transparent);
+  }
+  .badge.info {
+    color: var(--color-info-700);
+    background-color: var(--color-info-50);
+    --badge-ring-color: color-mix(in oklab, var(--color-info-600) 20%, transparent);
+  }
+  .badge.success {
+    color: var(--color-success-700);
+    background-color: var(--color-success-50);
+    --badge-ring-color: color-mix(in oklab, var(--color-success-600) 20%, transparent);
+  }
+  .badge.danger {
+    color: var(--color-danger-700);
+    background-color: var(--color-danger-50);
+    --badge-ring-color: color-mix(in oklab, var(--color-danger-600) 20%, transparent);
+  }
+  .badge.warning {
+    color: var(--color-warning-700);
+    background-color: var(--color-warning-50);
+    --badge-ring-color: color-mix(in oklab, var(--color-warning-500) 25%, transparent);
+  }
+  .badge.primary {
+    color: var(--color-primary-700);
+    background-color: var(--color-primary-50);
+    --badge-ring-color: color-mix(in oklab, var(--color-primary-600) 20%, transparent);
+  }
+  .badge.high {
+    color: var(--color-orange-700);
+    background-color: var(--color-orange-100);
+    --badge-ring-color: color-mix(in oklab, var(--color-orange-400) 25%, transparent);
+  }
+  .empty-state {
+    text-align: center;
+  }
+  .empty-state.default-spacing {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-12);
+  }
+  .empty-state.compact-spacing {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+  .empty-state-title {
+    margin-top: var(--space-2);
+    color: var(--text-1);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+  }
+  .empty-state-message {
+    margin-top: var(--space-1);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  .empty-state-message.no-title {
+    margin-top: var(--space-2);
+  }
+  .empty-state-action {
+    margin-top: var(--space-6);
+  }
+
+}

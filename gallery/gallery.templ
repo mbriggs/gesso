@@ -1,0 +1,57 @@
+package gallery
+
+import "github.com/mbriggs/gesso/ui"
+
+// Page renders the full gallery: a sticky section nav on the left (wired to
+// the scrollspy behavior) and every component demo on the right. Hosts wrap
+// it in their own layout and gate it out of production.
+templ Page(page PageData) {
+	<div class="design-shell">
+		<aside class="design-sidebar">
+			@Sidebar(page)
+		</aside>
+		<div class="design-content">
+			@ui.PageHeader(ui.PageHeaderProps{
+				Title: "Design system",
+				Sub:   "Product-first review page for surfaces, states, tokens, and responsive behavior.",
+			})
+			for _, group := range page.Groups {
+				for _, section := range group.Sections {
+					<section id={ section.ID } class="design-section" data-ui-scrollspy-section>
+						@ui.SectionHead(ui.SectionHeadProps{Title: section.Title, Meta: "#" + section.ID})
+						<div class="design-section-body">
+							@section.Demo
+						</div>
+					</section>
+				}
+			}
+		</div>
+	</div>
+}
+
+templ Sidebar(page PageData) {
+	for _, group := range page.Groups {
+		<div class="design-nav-group">
+			<div class="shell-sidebar-section-label">{ group.Title }</div>
+			for _, section := range group.Sections {
+				<a href={ templ.SafeURL("#" + section.ID) } class="shell-nav-item" data-ui-scrollspy-link>
+					<span>{ section.Title }</span>
+				</a>
+			}
+		</div>
+	}
+}
+
+// HeadExtras links the gallery-only stylesheet; render it in the host
+// layout's <head> for the /design route.
+templ HeadExtras() {
+	<link rel="stylesheet" href={ ui.AssetPath("styles/design.css") }/>
+}
+
+templ designIconPlus() {
+	<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+}
+
+templ designIconChevron() {
+	<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"></path></svg>
+}

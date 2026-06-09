@@ -1,0 +1,948 @@
+package gallery
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/mbriggs/gesso/ui"
+)
+
+// Foundations -----------------------------------------------------------------
+
+templ designDemoTokens() {
+	<div class="stack gap-lg">
+		<div>
+			@designLabel("Color palettes")
+			<div class="stack gap-md">
+				for _, p := range designPalettes {
+					<div>
+						<p class="design-toc-label" style="margin-bottom: 4px">{ p.Name }</p>
+						<div class="design-token-grid">
+							for _, step := range p.Steps {
+								@designSwatch(fmt.Sprintf("%d", step), fmt.Sprintf("var(--color-%s-%d)", p.Tone, step), designSwatchFG(step), false)
+							}
+						</div>
+					</div>
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Semantic surfaces")
+			<div class="design-row">
+				for _, s := range designSurfaces {
+					@designSwatch(s, fmt.Sprintf("var(--%s)", s), "var(--text-1)", true)
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Text tokens")
+			<div class="design-row">
+				for _, t := range designTextTokens {
+					if t == "text-inverted" {
+						<div class="design-text-token inverted" style={ fmt.Sprintf("color: var(--%s)", t) }>{ t }</div>
+					} else {
+						<div class="design-text-token" style={ fmt.Sprintf("color: var(--%s)", t) }>{ t }</div>
+					}
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Spacing scale")
+			<div class="design-row">
+				for _, s := range designSpacingSteps {
+					<div class="design-space-cell">
+						<div class="design-space-cell-block" style={ fmt.Sprintf("width: var(--space-%s); height: var(--space-%s)", s, s) }></div>
+						<div class="design-space-cell-label">{ s }</div>
+					</div>
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Radii")
+			<div class="design-row">
+				for _, r := range designRadii {
+					<div class="design-space-cell">
+						<div class="design-radius" style={ fmt.Sprintf("border-radius: var(--radius-%s)", r) }></div>
+						<div class="design-space-cell-label">{ r }</div>
+					</div>
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Shadows / focus rings")
+			<div class="design-row">
+				for _, s := range designShadows {
+					<div class="design-space-cell">
+						<div class="design-shadow-box" style={ fmt.Sprintf("box-shadow: %s", s.Var) }></div>
+						<div class="design-shadow-label">{ s.Name }</div>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ designSwatch(label, color, fg string, bordered bool) {
+	if bordered {
+		<div class="design-swatch bordered" style={ fmt.Sprintf("background: %s; color: %s", color, fg) }>{ label }</div>
+	} else {
+		<div class="design-swatch" style={ fmt.Sprintf("background: %s; color: %s", color, fg) }>{ label }</div>
+	}
+}
+
+templ designDemoThemePreview() {
+	<div class="design-theme-pair">
+		@designThemeFrame("Light", false)
+		@designThemeFrame("Dark", true)
+	</div>
+}
+
+templ designThemeFrame(label string, dark bool) {
+	if dark {
+		<div class="design-theme-frame dark">
+			@designThemeFrameInner(label)
+		</div>
+	} else {
+		<div class="design-theme-frame">
+			@designThemeFrameInner(label)
+		</div>
+	}
+}
+
+templ designThemeFrameInner(label string) {
+	<div class="design-theme-frame-head">
+		<span>{ label }</span>
+		@ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "ready"})
+	</div>
+	<div class="design-theme-frame-body">
+		<div>
+			<p class="design-theme-title">Business cards</p>
+			<p class="design-theme-copy">4 substrates · 2 option groups · press queue active</p>
+		</div>
+		<div class="design-theme-actions">
+			@ui.Button(ui.ButtonProps{Type: "button", Variant: "secondary", Size: "sm", Text: "Duplicate"})
+			@ui.Button(ui.ButtonProps{Type: "button", Size: "sm", Text: "Edit"})
+		</div>
+	</div>
+}
+
+templ designDemoTypography() {
+	<div class="stack gap-sm">
+		<div style="font-family: var(--font-display); font-size: var(--text-3xl); color: var(--text-1)">Display 3xl — The quick brown fox</div>
+		<div style="font-size: var(--text-2xl); color: var(--text-1)">Heading 2xl — The quick brown fox</div>
+		<div style="font-size: var(--text-xl); color: var(--text-1)">Heading xl — The quick brown fox</div>
+		<div style="font-size: var(--text-lg); color: var(--text-1)">Heading lg — The quick brown fox</div>
+		<div style="font-size: var(--text-base); color: var(--text-1)">Body base — The quick brown fox jumps over the lazy dog.</div>
+		<div style="font-size: var(--text-sm); color: var(--text-2)">Body sm — The quick brown fox jumps over the lazy dog.</div>
+		<div style="font-size: var(--text-xs); color: var(--text-muted)">Caption xs — The quick brown fox jumps over the lazy dog.</div>
+		<div style="font-family: var(--font-mono); font-size: var(--text-sm)">Mono — const x = 42;</div>
+	</div>
+}
+
+// Actions ---------------------------------------------------------------------
+
+templ designDemoButtons() {
+	<div class="stack gap-lg">
+		<div>
+			@designLabel("Variants")
+			<div class="design-row">
+				for _, v := range designButtonVariants {
+					@ui.Button(ui.ButtonProps{Type: "button", Variant: v, Text: v})
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Sizes (primary)")
+			<div class="design-row">
+				for _, s := range designButtonSizes {
+					@ui.Button(ui.ButtonProps{Type: "button", Size: s, Text: "Button " + s})
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("With icons")
+			<div class="design-row">
+				@ui.Button(ui.ButtonProps{Type: "button", IconLeft: designIconPlus(), Text: "New family"})
+				@ui.Button(ui.ButtonProps{Type: "button", Variant: "secondary", IconRight: designIconChevron(), Text: "Continue"})
+				@ui.Button(ui.ButtonProps{Type: "button", Variant: "soft", IconLeft: designIconPlus(), IconRight: designIconChevron(), Text: "Both"})
+			</div>
+		</div>
+		<div>
+			@designLabel("States (pinned via data-force-state)")
+			<div class="design-state-grid">
+				<div class="design-state-head">&nbsp;</div>
+				<div class="design-state-head">Rest</div>
+				<div class="design-state-head">Hover</div>
+				<div class="design-state-head">Focus</div>
+				<div class="design-state-head">Active</div>
+				for _, v := range designButtonVariants {
+					<div class="design-state-row-label">{ v }</div>
+					for _, state := range designForceStates {
+						<div>
+							@designStateButton(v, state)
+						</div>
+					}
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Disabled + block")
+			<div class="stack gap-sm">
+				<div class="design-row">
+					@ui.Button(ui.ButtonProps{Type: "button", Disabled: true, Text: "Disabled primary"})
+					@ui.Button(ui.ButtonProps{Type: "button", Variant: "secondary", Disabled: true, Text: "Disabled secondary"})
+					@ui.Button(ui.ButtonProps{Type: "button", Variant: "danger", Disabled: true, Text: "Disabled danger"})
+				</div>
+				@ui.Button(ui.ButtonProps{Type: "button", Block: true, Text: "Block button (full width)"})
+			</div>
+		</div>
+	</div>
+}
+
+templ designStateButton(variant, state string) {
+	if state == "rest" {
+		<button type="button" class={ ui.ButtonClasses(variant, "") }>{ variant }</button>
+	} else {
+		<button type="button" class={ ui.ButtonClasses(variant, "") } data-force-state={ state }>{ variant }</button>
+	}
+}
+
+templ designDemoMenus() {
+	@ui.Card(ui.CardProps{Padded: true, Content: designMenusBody()})
+}
+
+templ designMenusBody() {
+	@ui.CardBody(ui.CardBodyProps{Content: designMenusGrid()})
+}
+
+templ designMenusGrid() {
+	<div class="design-menu-demo-grid">
+		<div>
+			@designLabel("Interactive")
+			@ui.Menu(ui.MenuProps{
+				TriggerLabel: "Family actions",
+				Placement:    "bottom start",
+				Content:      designMenuContents(),
+			})
+		</div>
+		<div>
+			@designLabel("Pinned open")
+			<div class="design-menu-static">
+				<button type="button" class="kebab-trigger open" aria-label="Pinned menu trigger" aria-haspopup="menu" aria-expanded="true">
+					<span aria-hidden="true">&#8942;</span>
+				</button>
+				<div class="menu-panel start design-menu-panel-pinned" role="menu">
+					@designMenuContents()
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ designMenuContents() {
+	@ui.MenuLabel("Family")
+	@ui.MenuValue("business-cards")
+	@ui.MenuSeparator()
+	@ui.MenuItem(ui.MenuItemProps{Text: "Edit family"})
+	@ui.MenuItem(ui.MenuItemProps{Text: "Duplicate"})
+	@ui.MenuItem(ui.MenuItemProps{Text: "Export JSON"})
+	@ui.MenuSeparator()
+	@ui.MenuItem(ui.MenuItemProps{Text: "Archive", Danger: true})
+}
+
+templ designDemoModal() {
+	<div class="stack gap-sm">
+		<div class="design-row">
+			<button type="button" class={ ui.ButtonClasses("primary", "") } data-ui-modal-open="design-modal-md">Open md</button>
+			<button type="button" class={ ui.ButtonClasses("secondary", "") } data-ui-modal-open="design-modal-wide">Open wide</button>
+			<button type="button" class={ ui.ButtonClasses("soft", "") } data-ui-modal-open="design-modal-full">Open full</button>
+		</div>
+		@ui.Modal(ui.ModalProps{ID: "design-modal-md", Title: "Modal — md", Size: ui.ModalSizeMd, Content: designModalBody()})
+		@ui.Modal(ui.ModalProps{ID: "design-modal-wide", Title: "Modal — wide", Size: ui.ModalSizeWide, Content: designModalBody()})
+		@ui.Modal(ui.ModalProps{ID: "design-modal-full", Title: "Modal — full", Size: ui.ModalSizeFull, Content: designModalBody()})
+	</div>
+}
+
+templ designModalBody() {
+	@ui.ModalBody(ui.ModalBodyProps{Content: designModalInner()})
+}
+
+templ designModalInner() {
+	<div class="stack gap-sm">
+		<p>The dialog uses the native &lt;dialog&gt; element — backdrop click and ESC both close.</p>
+		<div class="form-actions modal">
+			<button type="button" class={ ui.ButtonClasses("secondary", "") } data-ui-modal-close>Cancel</button>
+			<button type="button" class={ ui.ButtonClasses("primary", "") } data-ui-modal-close>Confirm</button>
+		</div>
+	</div>
+}
+
+// Inputs ----------------------------------------------------------------------
+
+templ designDemoForms() {
+	<div class="stack gap-lg">
+		@ui.Card(ui.CardProps{Padded: true, Content: designFormsCard()})
+		<div>
+			@designLabel("Input states (pinned via data-force-state)")
+			<div class="design-input-state-grid">
+				<input class="input" placeholder="Rest"/>
+				<input class="input" placeholder="Focus" data-force-state="focus"/>
+				<input class="input invalid" value="invalid" placeholder="Invalid"/>
+				<input class="input invalid" value="invalid + focus" placeholder="Invalid + focus" data-force-state="focus"/>
+			</div>
+		</div>
+	</div>
+}
+
+templ designFormsCard() {
+	@ui.CardHeader(ui.CardHeaderProps{Title: "Form fields"})
+	@ui.CardBody(ui.CardBodyProps{Content: designFormsBody()})
+}
+
+templ designFormsBody() {
+	<form>
+		<div class="stack gap-md">
+			@ui.Field(ui.FieldProps{ID: "design-fam-name", Label: "Family name", Hint: "Shown to operators and catalog admins.", Control: ui.Input(ui.InputProps{ID: "design-fam-name", Placeholder: "Business cards"})})
+			@ui.Field(ui.FieldProps{ID: "design-fam-slug", Label: "Slug", Error: "Already taken.", Control: ui.Input(ui.InputProps{ID: "design-fam-slug", Value: "business-cards", Invalid: true})})
+			@ui.Field(ui.FieldProps{ID: "design-fam-category", Label: "Category", Control: ui.Select(ui.SelectProps{ID: "design-fam-category", Content: designCategoryOptions()})})
+			@ui.Field(ui.FieldProps{ID: "design-fam-note", Label: "Internal note", Control: ui.Textarea(ui.TextareaProps{ID: "design-fam-note", Placeholder: "Production notes for this family..."})})
+			@ui.Checkbox(ui.CheckboxProps{ID: "design-f-customizable", Label: "Allow configurable options", Checked: true})
+			@ui.Checkbox(ui.CheckboxProps{ID: "design-f-archived", Label: "Archive this family"})
+			<div class="form-actions">
+				@ui.Button(ui.ButtonProps{Type: "button", Variant: "secondary", Text: "Cancel"})
+				@ui.Button(ui.ButtonProps{Type: "submit", Text: "Save"})
+			</div>
+		</div>
+	</form>
+}
+
+templ designCategoryOptions() {
+	<option value="print" selected>Print</option>
+	<option value="promotional">Promotional</option>
+	<option value="packaging">Packaging</option>
+}
+
+templ designDemoCombobox() {
+	@ui.Card(ui.CardProps{Padded: true, Content: designComboboxBody()})
+}
+
+templ designComboboxBody() {
+	@ui.CardBody(ui.CardBodyProps{Content: designComboboxInner()})
+}
+
+templ designComboboxInner() {
+	@ui.Combobox(ui.ComboboxProps{
+		ID:           "design-substrate",
+		Label:        "Default substrate",
+		Value:        "silk",
+		IncludeBlank: "— none —",
+		Placeholder:  "Pick a substrate",
+		Hint:         "Current value: silk",
+		Choices: []ui.ComboboxChoice{
+			{Label: "Silk cover", Value: "silk"},
+			{Label: "Uncoated cover", Value: "uncoated"},
+			{Label: "White vinyl", Value: "vinyl"},
+			{Label: "Kraft stock", Value: "kraft"},
+		},
+	})
+}
+
+templ designDemoToggle() {
+	@ui.Card(ui.CardProps{Padded: true, Content: designToggleBody()})
+}
+
+templ designToggleBody() {
+	@ui.CardBody(ui.CardBodyProps{Content: designToggleInner()})
+}
+
+templ designToggleInner() {
+	<div class="stack gap-md">
+		@ui.Toggle(ui.ToggleProps{ID: "design-toggle-1", Label: "Email notifications", Caption: "Send a digest each morning.", Checked: true})
+		@ui.Toggle(ui.ToggleProps{ID: "design-toggle-2", Label: "Beta features", Caption: "Show in-progress UI.", Hint: "Restart required after change."})
+		@ui.Toggle(ui.ToggleProps{ID: "design-toggle-3", Label: "Disabled", Disabled: true})
+		<div class="design-row">
+			@ui.StatusToggle(ui.StatusToggleProps{Name: "design-st-1", Checked: true, OnLabel: "Active", OffLabel: "Inactive"})
+			@ui.StatusToggle(ui.StatusToggleProps{Name: "design-st-2", OnLabel: "Active", OffLabel: "Inactive"})
+		</div>
+	</div>
+}
+
+templ designDemoSegmented() {
+	@ui.Card(ui.CardProps{Padded: true, Content: designSegmentedBody()})
+}
+
+templ designSegmentedBody() {
+	@ui.CardBody(ui.CardBodyProps{Content: designSegmentedInner()})
+}
+
+templ designSegmentedInner() {
+	@ui.Segmented(ui.SegmentedProps{
+		ID:    "design-segmented",
+		Name:  "families",
+		Label: "Families",
+		Value: "ready",
+		Hint:  "Picked: ready",
+		Choices: []ui.SegmentedChoice{
+			{Label: "All", Value: "all"},
+			{Label: "Ready", Value: "ready"},
+			{Label: "Incomplete", Value: "incomplete"},
+		},
+	})
+}
+
+// Navigation ------------------------------------------------------------------
+
+templ designDemoPagination() {
+	<div class="stack gap-sm">
+		@ui.Pagination(ui.PaginationProps{Page: 5, Pages: 12, HrefBase: "#pagination-page-", InfoText: "Page 5 of 12"})
+		<p style="font-size: var(--text-sm); color: var(--text-muted)">Hrefs jump to #pagination-page-N — no real navigation.</p>
+	</div>
+}
+
+// Feedback --------------------------------------------------------------------
+
+templ designDemoAlerts() {
+	<div class="stack gap-sm">
+		@ui.Alert(ui.AlertProps{Tone: ui.ToneInfo, Title: "Heads up", Text: "A new dependency was added. Re-run go mod tidy."})
+		@ui.Alert(ui.AlertProps{Tone: ui.ToneSuccess, Title: "Saved", Text: "Your changes are live."})
+		@ui.Alert(ui.AlertProps{Tone: ui.ToneWarning, Title: "Slow query", Text: "The catalog query took 1.4s on the last request."})
+		@ui.Alert(ui.AlertProps{Tone: ui.ToneDanger, Title: "Could not connect", Text: "Database unreachable — retrying in 5 seconds."})
+		@ui.Alert(ui.AlertProps{Tone: ui.ToneInfo, Text: "No title — single paragraph alert."})
+	</div>
+}
+
+templ designDemoFeedback() {
+	<div class="stack gap-lg">
+		<div>
+			@designLabel("StatusDot")
+			<div class="design-row">
+				for _, t := range designSemanticTones {
+					<div class="design-row">
+						@ui.StatusDot(ui.Tone(t))
+						<span style="font-size: var(--text-sm)">{ t }</span>
+					</div>
+				}
+				<div class="design-row">
+					<span class="status-dot success pulse" aria-hidden="true"></span>
+					<span style="font-size: var(--text-sm)">pulse</span>
+				</div>
+			</div>
+		</div>
+		<div>
+			@designLabel("Spinner")
+			<div class="design-row">
+				@ui.Spinner(ui.SpinnerProps{})
+				<span style="font-size: var(--text-sm); color: var(--text-muted)">indeterminate</span>
+			</div>
+		</div>
+		<div>
+			@designLabel("Skeleton")
+			@ui.Card(ui.CardProps{Padded: true, Content: designSkeletonBody()})
+		</div>
+		<div>
+			@designLabel("Progress")
+			<div class="stack gap-sm">
+				@ui.Progress(ui.ProgressProps{Value: 20, Total: 100, Tone: ui.ToneInfo, Label: "Loading"})
+				@ui.Progress(ui.ProgressProps{Value: 55, Total: 100, Tone: ui.TonePrimary})
+				@ui.Progress(ui.ProgressProps{Value: 75, Total: 100, Tone: ui.ToneSuccess})
+				@ui.Progress(ui.ProgressProps{Value: 90, Total: 100, Tone: ui.ToneWarning})
+				@ui.Progress(ui.ProgressProps{Value: 100, Total: 100, Tone: ui.ToneDanger})
+				<div class="design-row">
+					@ui.Progress(ui.ProgressProps{Value: 40, Total: 100, Size: "xs"})
+					@ui.Progress(ui.ProgressProps{Value: 40, Total: 100, Size: "sm"})
+					@ui.Progress(ui.ProgressProps{Value: 40, Total: 100, Size: "md"})
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ designSkeletonBody() {
+	@ui.CardBody(ui.CardBodyProps{Content: designSkeletonRows()})
+}
+
+templ designSkeletonRows() {
+	@ui.Skeleton(ui.SkeletonProps{Rows: 3})
+}
+
+templ designDemoStageBar() {
+	@ui.StageBar(ui.StageBarProps{
+		Current: "press",
+		Stages: []ui.Stage{
+			{Key: "intake", Label: "Intake", Hint: "Files received", Status: ui.StatusCompleted},
+			{Key: "design", Label: "Design", Hint: "Proof approved", Status: ui.StatusCompleted},
+			{Key: "press", Label: "Press", Hint: "Running", Status: ui.StatusActive},
+			{Key: "ship", Label: "Ship", Hint: "Pending", Status: ui.StatusPending},
+		},
+	})
+}
+
+templ designDemoStepper() {
+	@ui.Stepper(ui.StepperProps{
+		Now: designStepperBase(),
+		Header: ui.StepperHeader{
+			Title:        "Job 4821 — POD pipeline",
+			Status:       ui.StepperStatusActive,
+			Animated:     true,
+			Icon:         ui.Spinner(ui.SpinnerProps{}),
+			ElapsedSince: designStepperBase().Add(-120 * time.Second),
+		},
+		Steps: []ui.StepperStep{
+			{
+				Name:       "fetch",
+				Label:      "Fetch input files",
+				Status:     ui.StatusCompleted,
+				Summary:    "12 files, 4.2 MB total.",
+				StartedAt:  designStepperBase().Add(-120 * time.Second),
+				FinishedAt: designStepperBase().Add(-90 * time.Second),
+			},
+			{
+				Name:       "validate",
+				Label:      "Validate metadata",
+				Status:     ui.StatusCompleted,
+				StartedAt:  designStepperBase().Add(-90 * time.Second),
+				FinishedAt: designStepperBase().Add(-60 * time.Second),
+				Children: []ui.StepperStep{
+					{Name: "schema", Label: "Schema OK", Status: ui.StatusCompleted},
+					{Name: "checksum", Label: "Checksum OK", Status: ui.StatusCompleted},
+				},
+			},
+			{
+				Name:      "render",
+				Label:     "Render preview",
+				Status:    ui.StatusActive,
+				Summary:   "Rendering page 3 of 12.",
+				StartedAt: designStepperBase().Add(-30 * time.Second),
+			},
+			{Name: "upload", Label: "Upload to printer", Status: ui.StatusPending},
+		},
+	})
+}
+
+// Supporting ------------------------------------------------------------------
+
+templ designDemoBadges() {
+	<div class="stack gap-md">
+		<div>
+			@designLabel("Tones")
+			<div class="design-row">
+				for _, t := range designBadgeTones {
+					@ui.Badge(ui.BadgeProps{Tone: ui.Tone(t), Text: t})
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("Pill")
+			<div class="design-row">
+				for _, t := range designBadgeTones {
+					@ui.Badge(ui.BadgeProps{Tone: ui.Tone(t), Pill: true, Text: t})
+				}
+			</div>
+		</div>
+	</div>
+}
+
+templ designDemoCards() {
+	<div class="design-card-grid">
+		@ui.Card(ui.CardProps{Padded: true, Content: designCardWithHeader()})
+		@ui.Card(ui.CardProps{Padded: true, NoShadow: true, Content: designCardNoShadow()})
+		@ui.Card(ui.CardProps{Content: designCardSectioned()})
+	</div>
+}
+
+templ designCardWithHeader() {
+	@ui.CardHeader(ui.CardHeaderProps{Title: "Card with header", Subtitle: "Padded, default shadow"})
+	@ui.CardBody(ui.CardBodyProps{Content: designText("Body content sits below the header.")})
+}
+
+templ designCardNoShadow() {
+	@ui.CardHeader(ui.CardHeaderProps{Title: "No shadow", Subtitle: "Flat surface for nested use"})
+	@ui.CardBody(ui.CardBodyProps{Content: designText("Use inside other cards or table chrome.")})
+}
+
+templ designCardSectioned() {
+	@ui.CardHeader(ui.CardHeaderProps{Title: "Unpadded", Subtitle: "Sections handle their own padding"})
+	@ui.CardBody(ui.CardBodyProps{Content: designSectionedBody()})
+	@ui.CardFooter(ui.CardFooterProps{Content: designSectionedFooter()})
+}
+
+templ designSectionedBody() {
+	<div style="padding: var(--space-4)">Sectioned body.</div>
+}
+
+templ designSectionedFooter() {
+	<div style="padding: var(--space-3) var(--space-4)">Footer</div>
+}
+
+templ designText(s string) {
+	{ s }
+}
+
+templ designDemoTooltips() {
+	<div class="stack gap-md">
+		<div class="design-row">
+			@ui.Tooltip(ui.TooltipProps{TextString: "Top tooltip", Position: ui.TooltipTop, FocusableChild: true, Trigger: designTooltipButton("Hover top")})
+			@ui.Tooltip(ui.TooltipProps{TextString: "Bottom tooltip", Position: ui.TooltipBottom, FocusableChild: true, Trigger: designTooltipButton("Hover bottom")})
+			@ui.Tooltip(ui.TooltipProps{TextString: "Left tooltip", Position: ui.TooltipLeft, FocusableChild: true, Trigger: designTooltipButton("Hover left")})
+			@ui.Tooltip(ui.TooltipProps{TextString: "Right tooltip", Position: ui.TooltipRight, FocusableChild: true, Trigger: designTooltipButton("Hover right")})
+		</div>
+		<div>
+			@designLabel("Pinned preview")
+			<div class="design-row design-tooltip-preview">
+				@ui.Tooltip(ui.TooltipProps{TextString: "Missing substrates or option types", Position: ui.TooltipTop, Class: "design-tooltip-forced", Trigger: designTooltipUnderline()})
+			</div>
+		</div>
+	</div>
+}
+
+templ designTooltipButton(label string) {
+	@ui.Button(ui.ButtonProps{Type: "button", Variant: "secondary", Text: label})
+}
+
+templ designTooltipUnderline() {
+	<span style="cursor: help; text-decoration: underline dotted">Incomplete</span>
+}
+
+// Product surfaces ------------------------------------------------------------
+
+templ designDemoProductSurface() {
+	<div class="design-product-surface">
+		@ui.PageHeader(ui.PageHeaderProps{
+			Eyebrow:     designEyebrowFAM(),
+			Breadcrumbs: designProductCrumbs(),
+			Title:       "Business cards",
+			Sub:         "Coated stock family with four substrates and two configurable option groups.",
+			Badges:      designProductBadges(),
+			Actions:     designProductActions(),
+		})
+		<dl class="metric-grid design-product-metrics">
+			<div class="metric primary">
+				<dt>Substrates</dt>
+				<dd>4</dd>
+			</div>
+			<div class="metric info">
+				<dt>Options</dt>
+				<dd>2</dd>
+			</div>
+			<div class="metric warning">
+				<dt>Open jobs</dt>
+				<dd>18</dd>
+			</div>
+			<div class="metric success">
+				<dt>Errors</dt>
+				<dd>0</dd>
+			</div>
+		</dl>
+		<div class="design-product-grid">
+			<section class="design-product-panel">
+				<div class="design-product-panel-head">
+					<h3>Production state</h3>
+					@ui.Badge(ui.BadgeProps{Tone: ui.ToneWarning, Text: "queued"})
+				</div>
+				@ui.StageBar(ui.StageBarProps{
+					Variant: ui.StageBarEmbedded,
+					Current: "press",
+					Stages: []ui.Stage{
+						{Key: "catalog", Label: "Catalog", Hint: "Ready", Status: ui.StatusCompleted},
+						{Key: "proof", Label: "Proof", Hint: "Approved", Status: ui.StatusCompleted},
+						{Key: "press", Label: "Press", Hint: "Queued", Status: ui.StatusActive},
+						{Key: "ship", Label: "Ship", Hint: "Waiting", Status: ui.StatusPending},
+					},
+				})
+			</section>
+			<section class="design-product-panel">
+				<div class="design-product-panel-head">
+					<h3>Substrate readiness</h3>
+					@ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "4 ready"})
+				</div>
+				@ui.TableFrame(ui.TableFrameProps{Content: designProductTable()})
+			</section>
+		</div>
+	</div>
+}
+
+templ designEyebrowFAM() {
+	@ui.DisplayID("FAM-", "4821", "")
+}
+
+templ designProductCrumbs() {
+	@ui.Breadcrumbs(ui.BreadcrumbsProps{
+		Items: []ui.BreadcrumbItem{
+			{Label: "Catalog", Href: "#"},
+			{Label: "Families", Href: "#"},
+			{Label: "Business cards", Current: true},
+		},
+	})
+}
+
+templ designProductBadges() {
+	@ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "ready"})
+	@ui.Badge(ui.BadgeProps{Tone: ui.ToneInfo, Text: "customizable"})
+	@ui.Badge(ui.BadgeProps{Tone: ui.ToneWarning, Text: "press queue"})
+}
+
+templ designProductActions() {
+	@ui.Button(ui.ButtonProps{Type: "button", Variant: "secondary", Text: "Duplicate"})
+	@ui.Button(ui.ButtonProps{Type: "button", Text: "Edit family"})
+}
+
+templ designProductTable() {
+	@ui.Table(ui.TableProps{
+		Density: ui.TableDensityCompact,
+		Layout:  ui.TableLayoutFixed,
+		Wrap:    true,
+		Content: designProductTableInner(),
+	})
+}
+
+templ designProductTableInner() {
+	<thead>
+		<tr>
+			<th>Substrate</th>
+			<th class="align-right">Weight</th>
+			<th class="align-center">Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Silk cover</td>
+			<td class="align-right">16pt</td>
+			<td class="align-center">@ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "ready"})</td>
+		</tr>
+		<tr>
+			<td>Uncoated cover</td>
+			<td class="align-right">14pt</td>
+			<td class="align-center">@ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "ready"})</td>
+		</tr>
+		<tr>
+			<td>Recycled matte</td>
+			<td class="align-right">13pt</td>
+			<td class="align-center">@ui.Badge(ui.BadgeProps{Tone: ui.ToneWarning, Text: "review"})</td>
+		</tr>
+	</tbody>
+}
+
+templ designDemoPageHeader() {
+	<div class="stack gap-lg">
+		@ui.Card(ui.CardProps{Padded: true, Content: designPageHeaderCard()})
+		@ui.Card(ui.CardProps{Padded: true, Content: designEmptyStateCard()})
+	</div>
+}
+
+templ designPageHeaderCard() {
+	@ui.PageHeader(ui.PageHeaderProps{
+		Eyebrow:     designEyebrowFAM(),
+		Breadcrumbs: designProductCrumbs(),
+		Title:       "Business cards",
+		Sub:         "4 substrates · 2 option types · last updated 2 hours ago",
+		Badges:      designPageHeaderBadges(),
+		Actions:     designProductActions(),
+	})
+	@ui.SummaryList(ui.SummaryListProps{Content: designPageHeaderSummary()})
+}
+
+templ designPageHeaderBadges() {
+	@ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "ready"})
+	@ui.Badge(ui.BadgeProps{Tone: ui.ToneInfo, Text: "customizable"})
+}
+
+templ designPageHeaderSummary() {
+	@ui.SummaryItem(ui.SummaryItemProps{TermText: "Category", DetailsText: "Print"})
+	@ui.SummaryItem(ui.SummaryItemProps{TermText: "Process", DetailsText: "Digital press"})
+	@ui.SummaryItem(ui.SummaryItemProps{TermText: "Slug", Details: ui.DisplayID("", "business-cards", "")})
+}
+
+templ designEmptyStateCard() {
+	@ui.CardHeader(ui.CardHeaderProps{Title: "Empty state"})
+	@ui.CardBody(ui.CardBodyProps{Content: designEmptyStateBody()})
+}
+
+templ designEmptyStateBody() {
+	@ui.EmptyState(ui.EmptyStateProps{
+		Title:   "No families yet",
+		Message: "Create your first family to get going.",
+		Action:  designEmptyStateAction(),
+	})
+}
+
+templ designEmptyStateAction() {
+	@ui.Button(ui.ButtonProps{Type: "button", Text: "New family"})
+}
+
+templ designDemoTables() {
+	<div class="stack gap-lg">
+		<div>
+			@designLabel("Default")
+			@ui.TableFrame(ui.TableFrameProps{Content: designDefaultTable()})
+		</div>
+		<div>
+			@designLabel("Data variant")
+			<form>
+				@ui.EditableGrid(ui.EditableGridProps{
+					DirtyCount:   2,
+					SaveLabel:    "Save changes",
+					DirtyMessage: designDirtyMessage(),
+					Content:      designDataTable(),
+				})
+			</form>
+		</div>
+	</div>
+}
+
+templ designDirtyMessage() {
+	<span>2 rows edited</span>
+}
+
+templ designDefaultTable() {
+	@ui.Table(ui.TableProps{Content: designDefaultTableInner()})
+}
+
+templ designDefaultTableInner() {
+	<thead>
+		<tr>
+			<th>Family</th>
+			<th>Category</th>
+			<th class="align-right">Substrates</th>
+			<th class="align-center">Status</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Business cards</td>
+			<td>Print</td>
+			<td class="align-right">4</td>
+			<td class="align-center">@ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "ready"})</td>
+		</tr>
+		<tr>
+			<td>Posters</td>
+			<td>Print</td>
+			<td class="align-right">7</td>
+			<td class="align-center">@ui.Badge(ui.BadgeProps{Tone: ui.ToneWarning, Text: "draft"})</td>
+		</tr>
+		<tr>
+			<td>Stickers</td>
+			<td>Promotional</td>
+			<td class="align-right">2</td>
+			<td class="align-center">@ui.Badge(ui.BadgeProps{Tone: ui.ToneDanger, Text: "incomplete"})</td>
+		</tr>
+	</tbody>
+}
+
+templ designDataTable() {
+	@ui.TableFrame(ui.TableFrameProps{Content: designDataTableInner()})
+}
+
+templ designDataTableInner() {
+	@ui.Table(ui.TableProps{Variant: ui.TableVariantData, Density: ui.TableDensityCompact, Content: designDataTableBody()})
+}
+
+templ designDataTableBody() {
+	<thead>
+		<tr>
+			<th>Metric</th>
+			<th class="align-right">Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>p50 latency</td>
+			<td class="align-right">42 ms</td>
+		</tr>
+		<tr>
+			<td>p99 latency</td>
+			<td class="align-right">182 ms</td>
+		</tr>
+	</tbody>
+}
+
+templ designDemoAuth() {
+	<div class="design-auth-frame">
+		<div class="auth-page">
+			<span class="auth-glow indigo" aria-hidden="true"></span>
+			<span class="auth-glow cyan" aria-hidden="true"></span>
+			<div class="auth-card">
+				<div class="auth-brand">
+					<span class="brand-mark glow" aria-hidden="true">G</span>
+				</div>
+				<h1 class="auth-headline">Welcome back</h1>
+				<p class="auth-subheadline">Sign in to GS Studio.</p>
+				<div class="auth-field-stack">
+					@ui.Field(ui.FieldProps{ID: "design-auth-email", Label: "Email", Control: ui.Input(ui.InputProps{ID: "design-auth-email", Type: "email", Placeholder: "you@example.com"})})
+					@ui.Field(ui.FieldProps{ID: "design-auth-pw", Label: "Password", Control: ui.Input(ui.InputProps{ID: "design-auth-pw", Type: "password", Placeholder: "••••••••"})})
+				</div>
+				@ui.Button(ui.ButtonProps{Type: "button", Block: true, Text: "Sign in"})
+			</div>
+		</div>
+	</div>
+}
+
+// Chrome helpers --------------------------------------------------------------
+
+templ designLabel(text string) {
+	<p class="design-label">{ text }</p>
+}
+
+// Late additions ----------------------------------------------------------------
+
+templ designDemoButtonLinks() {
+	<div class="stack gap-lg">
+		<div>
+			@designLabel("Variants (render as <a> — navigation styled as a button)")
+			<div class="design-row">
+				for _, v := range designButtonVariants {
+					@ui.ButtonLink(ui.LinkButtonProps{Href: "#button-links", Variant: v, Text: v})
+				}
+			</div>
+		</div>
+		<div>
+			@designLabel("With icon + block")
+			<div class="stack gap-sm">
+				<div class="design-row">
+					@ui.ButtonLink(ui.LinkButtonProps{Href: "#button-links", Variant: "secondary", IconRight: designIconChevron(), Text: "View family"})
+				</div>
+				@ui.ButtonLink(ui.LinkButtonProps{Href: "#button-links", Block: true, Text: "Block link (full width)"})
+			</div>
+		</div>
+	</div>
+}
+
+templ designDemoConfirmDialog() {
+	<div class="stack gap-sm">
+		<div class="design-row">
+			<button type="button" class={ ui.ButtonClasses("primary", "") } data-ui-modal-open="design-confirm-default">Open default</button>
+			<button type="button" class={ ui.ButtonClasses("danger", "") } data-ui-modal-open="design-confirm-danger">Open danger</button>
+		</div>
+		@ui.ConfirmDialog(ui.ConfirmDialogProps{
+			ID:           "design-confirm-default",
+			Title:        "Publish changes?",
+			Description:  "Operators will see the updated catalog immediately.",
+			ConfirmLabel: "Publish",
+			ConfirmAttrs: ui.Attrs("data-ui-modal-close", ""),
+		})
+		@ui.ConfirmDialog(ui.ConfirmDialogProps{
+			ID:           "design-confirm-danger",
+			Tone:         ui.ConfirmToneDanger,
+			Title:        "Archive this family?",
+			Description:  "Existing products keep working; new products can no longer use it.",
+			ConfirmLabel: "Archive",
+			ConfirmAttrs: ui.Attrs("data-ui-modal-close", ""),
+		})
+	</div>
+}
+
+templ designDemoStack() {
+	<div class="stack gap-lg">
+		for _, gap := range []ui.StackGap{ui.StackGapSm, ui.StackGapMd, ui.StackGapLg, ui.StackGapXl} {
+			<div>
+				@designLabel("gap-" + string(gap))
+				@ui.Stack(ui.StackProps{Gap: gap, Content: designStackBoxes()})
+			</div>
+		}
+	</div>
+}
+
+templ designStackBoxes() {
+	<div class="design-stack-box">One</div>
+	<div class="design-stack-box">Two</div>
+	<div class="design-stack-box">Three</div>
+}

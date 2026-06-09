@@ -1,0 +1,68 @@
+package ui
+
+templ Menu(p MenuProps) {
+	<details class={ Class("menu-root", p.Class) }>
+		<summary class={ menuTriggerClass(p.TriggerClass) } aria-label={ p.TriggerLabel }>
+			if p.TriggerContent != nil {
+				@p.TriggerContent
+			} else {
+				...
+			}
+		</summary>
+		<div class={ Class("menu-panel", menuPlacement(p.Placement), p.PanelClass) } role="menu" aria-label={ p.TriggerLabel }>
+			if p.Content != nil {
+				@p.Content
+			}
+		</div>
+	</details>
+}
+
+templ MenuItem(p MenuItemProps) {
+	<button
+		type={ menuButtonType(p.Type) }
+		class={ Class("menu-item", ClassIf(p.Danger, "danger"), p.Class) }
+		role="menuitem"
+		if p.Form != "" {
+			form={ p.Form }
+		}
+		if p.Name != "" {
+			name={ p.Name }
+		}
+		if p.Value != "" {
+			value={ p.Value }
+		}
+		{ p.Attrs... }
+	>
+		<span class="menu-item-label">{ p.Text }</span>
+	</button>
+}
+
+templ MenuSeparator() {
+	<div class="menu-separator" aria-hidden="true"></div>
+}
+
+templ MenuLabel(text string) {
+	<div class="menu-label">{ text }</div>
+}
+
+templ MenuValue(text string) {
+	<div class="menu-value">{ text }</div>
+}
+
+templ MenuConfirm(p MenuConfirmProps) {
+	{{ label := stringDefault(p.Label, "Continue") }}
+	{{ confirm := stringDefault(p.Confirm, label) }}
+	<details class="menu-confirm">
+		<summary class={ Class("menu-item", ClassIf(p.Danger, "danger")) } role="menuitem">
+			<span class="menu-item-label">{ label }</span>
+		</summary>
+		<div class="menu-confirm-panel">
+			if p.Message != "" {
+				<p class="menu-confirm-message">{ p.Message }</p>
+			}
+			<button class={ Class("menu-item menu-confirm-submit", ClassIf(p.Danger, "danger")) } type="submit" role="menuitem">
+				<span class="menu-item-label">{ confirm }</span>
+			</button>
+		</div>
+	</details>
+}

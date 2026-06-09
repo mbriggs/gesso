@@ -1,0 +1,14 @@
+package ui
+
+import templpkg "github.com/a-h/templ"
+templ Text(text string) {
+	{ text }
+}
+
+templ content(comp templpkg.Component, text string) {
+	if comp != nil {
+		@comp
+	} else {
+		{ text }
+	}
+}

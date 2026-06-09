@@ -1,0 +1,81 @@
+package ui
+
+templ Card(p CardProps) {
+	<div class={ cardClasses(p) } { p.Attrs... }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ CardHeader(p CardHeaderProps) {
+	<div class={ Class("card-header", p.Class) }>
+		if p.Title != "" {
+			<h3 class="card-title">{ p.Title }</h3>
+		}
+		if p.Subtitle != "" {
+			<p class="card-subtitle">{ p.Subtitle }</p>
+		}
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ CardBody(p CardBodyProps) {
+	<div class={ Class("card-body", p.Class) }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ CardFooter(p CardFooterProps) {
+	<div class={ Class("card-footer", p.Class) }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ Stack(p StackProps) {
+	<div class={ stackClasses(p) } { p.Attrs... }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ Skeleton(p SkeletonProps) {
+	<div class={ Class("skeleton", p.Class) } aria-hidden="true">
+		if !p.NoTitle {
+			<div class="skeleton-title"></div>
+		}
+		if skeletonRowCount(p) > 0 {
+			<div class="skeleton-rows">
+				for range skeletonRowCount(p) {
+					<div class="skeleton-row"></div>
+				}
+			</div>
+		}
+	</div>
+}
+
+templ SummaryList(p SummaryListProps) {
+	<dl class={ Class("summary-list", p.Class) }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</dl>
+}
+
+templ SummaryItem(p SummaryItemProps) {
+	<div class={ Class("summary-list-item", p.Class) }>
+		<dt class="summary-list-term">
+			@content(p.Term, p.TermText)
+		</dt>
+		<dd class="summary-list-details">
+			@content(p.Details, p.DetailsText)
+		</dd>
+	</div>
+}

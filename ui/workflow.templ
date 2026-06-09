@@ -1,0 +1,202 @@
+package ui
+
+import "time"
+
+templ StageBar(p StageBarProps) {
+	<nav aria-label={ stringDefault(p.Label, "Progress") } class={ stageBarClasses(p) }>
+		<div class="stage-bar-container">
+			<div class="stage-bar-track">
+				for i, stage := range p.Stages {
+					@stageBarSegment(stage, stage.Key == p.Current, i == len(p.Stages)-1)
+				}
+			</div>
+		</div>
+	</nav>
+}
+
+templ stageBarSegment(stage Stage, isCurrent, isLast bool) {
+	if stage.Href != "" && !isCurrent {
+		<a href={ templ.SafeURL(stage.Href) } class="stage-bar-item stage-bar-link">
+			@stageBarContent(stage, isCurrent)
+		</a>
+	} else if isCurrent {
+		<span class="stage-bar-item" aria-current="step">
+			@stageBarContent(stage, isCurrent)
+		</span>
+	} else {
+		<span class="stage-bar-item">
+			@stageBarContent(stage, isCurrent)
+		</span>
+	}
+	if !isLast {
+		<span class={ Class("stage-bar-connector", ClassIf(stage.Status == StatusCompleted || stage.Status == StatusFailed, "solid")) }></span>
+	}
+}
+
+templ stageBarContent(stage Stage, isCurrent bool) {
+	@StageIcon(stage.Status)
+	<span class={ Class("stage-bar-label", stageStatusClass(stage.Status), ClassIf(isCurrent, "current")) }>{ stage.Label }</span>
+	if stage.Hint != "" {
+		<span class={ Class("stage-bar-hint", stageStatusClass(stage.Status)) }>{ stage.Hint }</span>
+	}
+}
+
+templ StageIcon(status StepStatus) {
+	if status == StatusCompleted {
+		<svg viewBox="0 0 20 20" fill="currentColor" class="stage-bar-icon completed" aria-hidden="true">
+			<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5z" clip-rule="evenodd"></path>
+		</svg>
+	} else if status == StatusFailed {
+		<svg viewBox="0 0 20 20" fill="currentColor" class="stage-bar-icon failed" aria-hidden="true">
+			<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"></path>
+		</svg>
+	} else {
+		<span class="stage-bar-dot-wrap">
+			<span class={ Class("stage-bar-dot", ClassIf(status == StatusActive, "active"), ClassIf(status == StatusPending || status == "", "pending")) }></span>
+		</span>
+	}
+}
+
+templ StatusCircle(p StatusCircleProps) {
+	<div class={ statusCircleClasses(p) }>
+		if p.Status == StatusActive || p.Status == StatusPending {
+			<div class={ Class("status-circle-dot", statusCircleSize(p)) }></div>
+		}
+	</div>
+}
+
+templ Stepper(p StepperProps) {
+	{{ now := stepperNow(p) }}
+	<div class={ stepperClasses(p) }>
+		@stepperHeader(p.Header, now)
+		<div class="stepper-steps">
+			for i, step := range p.Steps {
+				@stepperRow(step, now, i == len(p.Steps)-1)
+			}
+		</div>
+		if p.Error != "" || p.ErrorContent != nil {
+			<div class="stepper-error">@content(p.ErrorContent, p.Error)</div>
+		}
+	</div>
+}
+
+templ stepperHeader(h StepperHeader, now time.Time) {
+	<div class="stepper-header">
+		if h.Icon != nil {
+			<span class={ Class("stepper-header-icon", string(h.IconColor), ClassIf(h.Animated, "spinning")) }>@h.Icon</span>
+		}
+		if h.Status == StepperStatusFailed || h.Status == StepperStatusPaused {
+			<h3 class="stepper-title">{ h.Title }</h3>
+		} else {
+			<h3 class="stepper-title">
+				{ h.Title }
+				if !h.ElapsedSince.IsZero() {
+					<span class="stepper-title-time"> &middot; { FormatElapsedBetween(h.ElapsedSince, now) }</span>
+				}
+			</h3>
+		}
+		if h.Action != nil {
+			<div class="stepper-header-action">@h.Action</div>
+		}
+	</div>
+}
+
+templ stepperRow(step StepperStep, now time.Time, last bool) {
+	<div class="stepper-step">
+		<div class="stepper-rail">
+			@StatusCircle(StatusCircleProps{Status: step.Status, Size: StatusCircleMd})
+			if !last {
+				<div class={ Class("stepper-line", stepperLineState(step.Status)) }></div>
+			}
+		</div>
+		<div class="stepper-content">
+			<p class={ Class("stepper-label", string(step.Status)) }>
+				{ step.Label }
+				@stepperElapsed(step, now)
+			</p>
+			@stepperDetail(step, false)
+			if len(step.Children) > 0 {
+				<div class="stepper-children">
+					for _, c := range step.Children {
+						@stepperChildRow(c, now)
+					}
+				</div>
+			}
+		</div>
+	</div>
+}
+
+templ stepperChildRow(step StepperStep, now time.Time) {
+	<div class="stepper-child">
+		@StatusCircle(StatusCircleProps{Status: step.Status, Size: StatusCircleSm})
+		<div class="stepper-child-content">
+			<p class={ Class("stepper-child-label", string(step.Status)) }>
+				{ step.Label }
+				@stepperElapsed(step, now)
+			</p>
+			@stepperDetail(step, true)
+		</div>
+	</div>
+}
+
+templ stepperDetail(step StepperStep, compact bool) {
+	if step.Summary != "" {
+		<div>
+			<p class={ Class("truncate-text", ternaryString(compact, "xs", "sm")) }>{ step.Summary }</p>
+			if step.DetailHref != "" {
+				<p class="truncate-detail">
+					<a href={ templ.SafeURL(step.DetailHref) } class={ Class("stepper-detail", ClassIf(compact, "compact")) }>{ stringDefault(step.DetailLabel, "View details") }</a>
+				</p>
+			}
+		</div>
+	} else if step.DetailHref != "" {
+		<p class="truncate-detail">
+			<a href={ templ.SafeURL(step.DetailHref) } class={ Class("stepper-detail", ClassIf(compact, "compact")) }>{ stringDefault(step.DetailLabel, "View details") }</a>
+		</p>
+	}
+}
+
+templ stepperElapsed(step StepperStep, now time.Time) {
+	if !step.StartedAt.IsZero() && step.Status == StatusCompleted && !step.FinishedAt.IsZero() {
+		<span class="stepper-time"> &middot; { FormatElapsedBetween(step.StartedAt, step.FinishedAt) }</span>
+	} else if !step.StartedAt.IsZero() && step.Status == StatusActive {
+		<span class="stepper-time"> &middot; { FormatElapsedBetween(step.StartedAt, now) }</span>
+	}
+}
+
+templ EditableGrid(p EditableGridProps) {
+	<div class={ Class("editable-grid", p.Class) }>
+		if p.Toolbar != nil {
+			<div class="editable-grid-toolbar">@p.Toolbar</div>
+		}
+		if p.Error != "" || p.ErrorContent != nil {
+			@Alert(AlertProps{Tone: ToneDanger, Content: p.ErrorContent, Text: p.Error})
+		}
+		<div class="editable-grid-body">
+			if p.Content != nil {
+				@p.Content
+			}
+		</div>
+		if p.DirtyCount > 0 {
+			@FloatingActionBar(FloatingActionBarProps{
+				Tone:    FloatingActionBarToneWarning,
+				Message: editableGridDirtyMessage(p),
+				Actions: editableGridActions(p),
+			})
+		}
+	</div>
+}
+
+templ editableGridDirtyMessage(p EditableGridProps) {
+	if p.DirtyMessage != nil {
+		@p.DirtyMessage
+	} else {
+		<strong>{ intToString(p.DirtyCount) }</strong>
+		{ " " + pluralUnsavedChange(p.DirtyCount) }
+	}
+}
+
+templ editableGridActions(p EditableGridProps) {
+	@Button(ButtonProps{Type: "button", Variant: "secondary", Disabled: p.Submitting, Text: stringDefault(p.ResetLabel, "Discard"), Attrs: p.ResetAttrs})
+	@Button(ButtonProps{Type: "submit", Variant: "primary", Disabled: p.Submitting, Text: editableGridSaveLabel(p), Loading: p.Submitting})
+}

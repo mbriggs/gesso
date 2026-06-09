@@ -1,0 +1,220 @@
+/* Cross-component utilities in the shared components layer; ui.css fixes the
+   cascade order before app chrome is loaded. */
+@layer components {
+
+  .hidden {
+    display: none;
+  }
+
+  /* Vertical-rhythm primitive. Children flow with a uniform gap; gap size
+     comes from a `.stack-{sm|md|lg|xl}` modifier rather than each child
+     reaching for `style={{ marginBottom: ... }}`. */
+  .stack {
+    display: flex;
+    flex-direction: column;
+  }
+  .stack.gap-sm {
+    gap: var(--space-3);
+  }
+  .stack.gap-md {
+    gap: var(--space-4);
+  }
+  .stack.gap-lg {
+    gap: var(--space-6);
+  }
+  .stack.gap-xl {
+    gap: var(--space-8);
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .tooltip {
+    position: relative;
+  }
+  .tooltip.inline {
+    display: inline-block;
+  }
+  .tooltip:focus-visible {
+    outline: none;
+    border-radius: 0.125rem;
+    box-shadow: var(--focus-ring);
+  }
+  .tooltip-bubble {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateZ(0);
+    transition: opacity 150ms;
+  }
+  .tooltip:hover .tooltip-bubble,
+  .tooltip:focus-within .tooltip-bubble {
+    opacity: 1;
+  }
+  .tooltip-bubble.top {
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: var(--space-2);
+    transform: translateX(-50%);
+  }
+  .tooltip-bubble.bottom {
+    top: 100%;
+    left: 50%;
+    margin-top: var(--space-2);
+    transform: translateX(-50%);
+  }
+  .tooltip-bubble.left {
+    right: 100%;
+    top: 50%;
+    margin-right: var(--space-2);
+    transform: translateY(-50%);
+  }
+  .tooltip-bubble.right {
+    left: 100%;
+    top: 50%;
+    margin-left: var(--space-2);
+    transform: translateY(-50%);
+  }
+  .tooltip-content {
+    position: relative;
+    border-radius: 0.25rem;
+    background-color: var(--color-zinc-900);
+    color: var(--color-white);
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
+    line-height: 1rem;
+    white-space: nowrap;
+  }
+  .tooltip-arrow {
+    position: absolute;
+  }
+  .tooltip-arrow.top {
+    top: 100%;
+    left: 50%;
+    margin-top: -0.25rem;
+    transform: translateX(-50%);
+  }
+  .tooltip-arrow.bottom {
+    bottom: 100%;
+    left: 50%;
+    margin-bottom: -0.25rem;
+    transform: translateX(-50%);
+  }
+  .tooltip-arrow.left {
+    left: 100%;
+    top: 50%;
+    margin-left: -0.25rem;
+    transform: translateY(-50%);
+  }
+  .tooltip-arrow.right {
+    right: 100%;
+    top: 50%;
+    margin-right: -0.25rem;
+    transform: translateY(-50%);
+  }
+  .tooltip-arrow-shape {
+    width: 0;
+    height: 0;
+    border: 0.25rem solid transparent;
+  }
+  .tooltip-arrow-shape.top {
+    border-top-color: var(--color-zinc-900);
+  }
+  .tooltip-arrow-shape.bottom {
+    border-bottom-color: var(--color-zinc-900);
+  }
+  .tooltip-arrow-shape.left {
+    border-left-color: var(--color-zinc-900);
+  }
+  .tooltip-arrow-shape.right {
+    border-right-color: var(--color-zinc-900);
+  }
+
+  .skeleton {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  .skeleton-title,
+  .skeleton-row {
+    border-radius: 0.25rem;
+    background-color: var(--border-1);
+  }
+  .skeleton-title {
+    height: 2rem;
+    margin-bottom: var(--space-4);
+  }
+  .skeleton-rows {
+    display: flex;
+    flex-direction: column;
+    row-gap: var(--space-3);
+  }
+  .skeleton-row {
+    height: 2.5rem;
+  }
+
+  .spinner-icon {
+    width: 1rem;
+    height: 1rem;
+    animation: spin 1s linear infinite;
+  }
+  .spinning {
+    animation: spin 1s linear infinite;
+  }
+
+  /* Reduced motion — disables non-essential animation and transition.
+     Keeps the system usable without the visual flourish. Sortable's
+     drag-feedback transitions and the modal-panel/page-header
+     mode transitions also collapse here so screen readers and
+     vestibular users aren't bombarded. */
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton,
+    .status-circle.active .status-circle-dot,
+    .spinner-icon,
+    .spinning {
+      animation: none;
+    }
+    .toggle-slider,
+    .modal-panel {
+      transition: none;
+    }
+    }
+
+  /* Forced colors (Windows High Contrast / similar). Re-establish focus rings
+     with `outline: Highlight`, which the system honors. */
+  @media (forced-colors: active) {
+    .input:focus-visible,
+    .input.invalid:focus-visible,
+    .checkbox:focus-visible,
+    .toggle-switch:focus-visible,
+    .segmented-option:focus-visible,
+    .button:focus-visible,
+    .button.primary:focus-visible,
+    .button.danger:focus-visible,
+    .button.secondary:focus-visible,
+    .button.soft:focus-visible,
+    .button.link:focus-visible,
+    .modal-close:focus-visible,
+    a.pager-link:focus-visible {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+      box-shadow: none;
+    }
+  }
+
+  .mono {
+    font-family: var(--font-mono);
+  }
+
+  .muted {
+    color: var(--text-muted);
+  }
+}
