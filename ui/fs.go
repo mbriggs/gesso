@@ -102,10 +102,16 @@ func AssetPath(rel string) string {
 
 // ImportMap renders the <script type="importmap"> that resolves bare
 // "ui/*" module specifiers to hashed URLs. It must appear in <head> before
-// the module script that loads ui.js.
+// the module script that loads ui.js. When the request carries a CSP nonce
+// (templ.WithNonce), the script tag includes it, so apps can serve a
+// Content-Security-Policy without 'unsafe-inline'.
 func ImportMap() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
-		if _, err := fmt.Fprintf(w, `<script type="importmap">%s</script>`, importMapJSON); err != nil {
+		nonceAttr := ""
+		if nonce := templ.GetNonce(ctx); nonce != "" {
+			nonceAttr = fmt.Sprintf(` nonce="%s"`, templ.EscapeString(nonce))
+		}
+		if _, err := fmt.Fprintf(w, `<script type="importmap"%s>%s</script>`, nonceAttr, importMapJSON); err != nil {
 			return fmt.Errorf("rendering import map: %w", err)
 		}
 		return nil

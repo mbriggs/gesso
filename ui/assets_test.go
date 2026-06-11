@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/a-h/templ"
 )
 
 // The CSS and JS entry points pull in their pieces by relative path, and a
@@ -114,5 +116,24 @@ func TestHashedAssetsServeImmutable(t *testing.T) {
 	}
 	if cc := rec.Header().Get("Cache-Control"); strings.Contains(cc, "immutable") {
 		t.Fatalf("bare asset Cache-Control = %q, want no immutable header", cc)
+	}
+}
+
+func TestImportMapCarriesCSPNonce(t *testing.T) {
+	var withNonce strings.Builder
+	ctx := templ.WithNonce(t.Context(), "test-nonce")
+	if err := ImportMap().Render(ctx, &withNonce); err != nil {
+		t.Fatalf("render with nonce: %v", err)
+	}
+	if !strings.Contains(withNonce.String(), `<script type="importmap" nonce="test-nonce">`) {
+		t.Fatalf("import map missing nonce attribute: %s", withNonce.String())
+	}
+
+	var without strings.Builder
+	if err := ImportMap().Render(t.Context(), &without); err != nil {
+		t.Fatalf("render without nonce: %v", err)
+	}
+	if strings.Contains(without.String(), "nonce") {
+		t.Fatalf("import map should omit the attribute when no nonce is set: %s", without.String())
 	}
 }
