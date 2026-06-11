@@ -227,4 +227,44 @@
     margin-top: var(--space-4);
     text-align: center;
   }
+
+  /* In-card flash — terser than a full Alert so it fits the card rhythm.
+     Default styling is the failure beat; `.ok` is the success one. */
+  .auth-card-flash {
+    margin: 0 0 var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    border-radius: 0.5rem;
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+    color: var(--color-danger-700);
+    background: color-mix(in oklab, var(--color-danger-500) 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-danger-500) 25%, transparent);
+  }
+  .auth-card-flash.ok {
+    color: var(--color-success-700);
+    background: color-mix(in oklab, var(--color-success-500) 10%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-success-500) 25%, transparent);
+  }
+  html.is-dark .auth-card-flash {
+    color: var(--color-danger-300);
+  }
+  html.is-dark .auth-card-flash.ok {
+    color: var(--color-success-300);
+  }
+
+  .auth-card-footer {
+    margin-top: var(--space-4);
+    text-align: center;
+    font-size: var(--text-sm);
+  }
+  .auth-card-footer a {
+    color: var(--color-primary-600);
+    font-weight: 500;
+  }
+  .auth-card-footer a:hover {
+    text-decoration: underline;
+  }
+  html.is-dark .auth-card-footer a {
+    color: var(--color-primary-400);
+  }
 }

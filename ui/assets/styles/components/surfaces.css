@@ -113,4 +113,25 @@
   .alert.summary {
     margin-bottom: var(--space-6);
   }
+  .alert.info .alert-icon-wrap {
+    color: var(--color-info-500);
+  }
+  .alert.success .alert-icon-wrap {
+    color: var(--color-success-500);
+  }
+  .alert.warning .alert-icon-wrap {
+    color: var(--color-warning-500);
+  }
+  .alert.danger .alert-icon-wrap {
+    color: var(--color-danger-500);
+  }
+
+  /* Flash region — the request's flash messages stacked as alerts, placed
+     by convention right below the page header (ui.Flash). */
+  .flash {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-block: var(--space-4);
+  }
 }

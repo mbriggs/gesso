@@ -83,6 +83,26 @@ templ confirmDialogBody(p ConfirmDialogProps) {
 	@ModalBody(ModalBodyProps{Content: confirmDialogInner(p)})
 }
 
+// GlobalConfirm is the single dialog instance behind the data-ui-confirm
+// interceptor (js/confirm.js). Render it once per layout; any form, submit
+// button, or link opts in with data-ui-confirm="message", with optional
+// data-ui-confirm-title / -label / -cancel-label / -tone="danger"
+// overrides. The defaults — "Are you sure?" / Confirm / Cancel — live here
+// and in confirm.js.
+templ GlobalConfirm() {
+	@ConfirmDialog(ConfirmDialogProps{
+		ID:                 "ui-confirm",
+		Title:              "Are you sure?",
+		DescriptionContent: globalConfirmMessage(),
+		ConfirmAttrs:       Attrs("data-ui-confirm-accept", ""),
+		CancelAttrs:        Attrs("data-ui-modal-close", "", "data-ui-confirm-cancel", ""),
+	})
+}
+
+templ globalConfirmMessage() {
+	<span data-ui-confirm-message></span>
+}
+
 templ confirmDialogInner(p ConfirmDialogProps) {
 	if p.Description != "" || p.DescriptionContent != nil {
 		<p>@content(p.DescriptionContent, p.Description)</p>

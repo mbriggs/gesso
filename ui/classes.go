@@ -180,7 +180,7 @@ func prefixed(prefix, value string) string {
 
 // coerceTone returns input if it is one of the allowed tones, else fallback.
 // Empty input always falls back. No alias mapping — call sites should pass
-// the canonical Tone* constants. The flash→tone bridge lives in server/.
+// the canonical Tone* constants. The flash→tone bridge is FlashTone (flash.go).
 func coerceTone(input Tone, allow []Tone, fallback Tone) Tone {
 	if input == "" {
 		return fallback

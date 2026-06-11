@@ -1,0 +1,22 @@
+package ui
+
+templ Tabs(p TabsProps) {
+	if len(p.Items) > 0 {
+		<nav class={ Class("tabs", p.Class) } aria-label={ stringDefault(p.AriaLabel, "Tabs") }>
+			for _, item := range p.Items {
+				<a
+					class="tab-item"
+					href={ stringDefault(item.Href, "#") }
+					if item.Current {
+						aria-current="page"
+					}
+				>
+					{ item.Label }
+					if item.Count != "" {
+						<span class="tab-count">{ item.Count }</span>
+					}
+				</a>
+			}
+		</nav>
+	}
+}

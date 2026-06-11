@@ -1,0 +1,22 @@
+package ui
+
+// Icon renders a named glyph from the built-in set as an inline SVG that
+// inherits currentColor and scales with font size (see .icon in
+// utilities.css). Icons are decorative by default (aria-hidden); when one
+// carries meaning on its own, wrap it in an element with a label.
+templ Icon(name IconName, class string) {
+	{{ shape := iconShapeFor(name) }}
+	if shape.Solid {
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class={ Class("icon", class) } aria-hidden="true">
+			for _, d := range shape.Paths {
+				<path d={ d }></path>
+			}
+		</svg>
+	} else {
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={ Class("icon", class) } aria-hidden="true">
+			for _, d := range shape.Paths {
+				<path d={ d }></path>
+			}
+		</svg>
+	}
+}

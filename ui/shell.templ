@@ -1,0 +1,121 @@
+package ui
+
+import templpkg "github.com/a-h/templ"
+
+templ Shell(p ShellProps) {
+	<div class={ Class("shell", p.Class) }>
+		<aside class="shell-sidebar" data-ui-shell-sidebar>
+			if p.Sidebar != nil {
+				@p.Sidebar
+			}
+		</aside>
+		<div class="shell-scrim" data-ui-shell-scrim></div>
+		<main class="shell-content">
+			if p.MobileHeader != nil {
+				@p.MobileHeader
+			}
+			<div class="shell-content-inner">
+				if p.Content != nil {
+					@p.Content
+				}
+			</div>
+		</main>
+	</div>
+}
+
+templ ShellSidebarHeader(p ShellSidebarHeaderProps) {
+	<div class="shell-sidebar-header">
+		if p.Brand != nil {
+			@p.Brand
+		}
+		if p.Actions != nil {
+			<div class="shell-sidebar-header-actions">
+				@p.Actions
+			</div>
+		}
+	</div>
+}
+
+templ ShellBrand(p ShellBrandProps) {
+	<a class="shell-sidebar-brand" href={ stringDefault(p.Href, "/") }>
+		if p.Prefix != "" {
+			<span class="shell-sidebar-brand-prefix">{ p.Prefix }</span>
+		}
+		{ p.Name }
+	</a>
+}
+
+templ ShellNav(content templpkg.Component) {
+	<nav class="shell-sidebar-nav">
+		if content != nil {
+			@content
+		}
+	</nav>
+}
+
+templ ShellNavSection(label string) {
+	<div class="shell-sidebar-section-label">{ label }</div>
+}
+
+templ ShellNavItem(p ShellNavItemProps) {
+	<a
+		class="shell-nav-item"
+		href={ stringDefault(p.Href, "#") }
+		if p.Active {
+			data-active="true"
+			aria-current="page"
+		}
+		{ p.Attrs... }
+	>
+		if p.Icon != nil {
+			<span class="shell-nav-icon">
+				@p.Icon
+			</span>
+		}
+		<span>{ p.Label }</span>
+	</a>
+}
+
+templ ShellSidebarFooter(content templpkg.Component) {
+	<div class="shell-sidebar-footer">
+		if content != nil {
+			@content
+		}
+	</div>
+}
+
+templ ShellMobileHeader(p ShellMobileHeaderProps) {
+	<header class="shell-mobile-header">
+		<button
+			type="button"
+			class="shell-menu-toggle"
+			data-ui-shell-toggle
+			aria-expanded="false"
+			aria-label={ stringDefault(p.MenuLabel, "Open navigation") }
+		>
+			@Icon(IconMenu, "")
+		</button>
+		if p.Brand != nil {
+			@p.Brand
+		}
+		if p.Actions != nil {
+			<div class="shell-mobile-actions">
+				@p.Actions
+			</div>
+		}
+	</header>
+}
+
+// ThemeToggle is the light/dark switch. js/theme.js flips html.is-dark and
+// persists the choice; CSS swaps the moon/sun glyphs off that class, so the
+// button itself is stateless markup.
+templ ThemeToggle(p ThemeToggleProps) {
+	<button type="button" class={ Class("theme-toggle", p.Class) } data-ui-theme-toggle aria-label="Toggle theme">
+		<span class="theme-toggle-moon">
+			@Icon(IconMoon, "")
+		</span>
+		<span class="theme-toggle-sun">
+			@Icon(IconSun, "")
+		</span>
+	</button>
+}

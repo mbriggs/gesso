@@ -1,0 +1,45 @@
+package ui
+
+templ ListGroup(p ListGroupProps) {
+	<ul class={ Class("list-group", p.Class) }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</ul>
+}
+
+templ ListRow(p ListRowProps) {
+	<li class={ Class("list-group-row", p.Class) }>
+		if p.Href != "" {
+			<a class="list-group-link" href={ p.Href }>
+				@listRowBody(p)
+				<span class="list-group-chevron">
+					@Icon(IconChevronRight, "")
+				</span>
+			</a>
+		} else {
+			<div class="list-group-link">
+				@listRowBody(p)
+			</div>
+		}
+	</li>
+}
+
+templ listRowBody(p ListRowProps) {
+	if p.Leading != nil {
+		<div class="list-group-leading">
+			@p.Leading
+		</div>
+	}
+	<div class="list-group-main">
+		<p class="list-group-title">@content(p.TitleContent, p.Title)</p>
+		if p.Meta != nil || p.MetaText != "" {
+			<div class="list-group-meta">@content(p.Meta, p.MetaText)</div>
+		}
+	</div>
+	if p.Trailing != nil {
+		<div class="list-group-trailing">
+			@p.Trailing
+		</div>
+	}
+}

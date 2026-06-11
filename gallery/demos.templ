@@ -857,23 +857,33 @@ templ designDataTableBody() {
 
 templ designDemoAuth() {
 	<div class="design-auth-frame">
-		<div class="auth-page">
-			<span class="auth-glow indigo" aria-hidden="true"></span>
-			<span class="auth-glow cyan" aria-hidden="true"></span>
-			<div class="auth-card">
-				<div class="auth-brand">
-					<span class="brand-mark glow" aria-hidden="true">G</span>
-				</div>
-				<h1 class="auth-headline">Welcome back</h1>
-				<p class="auth-subheadline">Sign in to GS Studio.</p>
-				<div class="auth-field-stack">
-					@ui.Field(ui.FieldProps{ID: "design-auth-email", Label: "Email", Control: ui.Input(ui.InputProps{ID: "design-auth-email", Type: "email", Placeholder: "you@example.com"})})
-					@ui.Field(ui.FieldProps{ID: "design-auth-pw", Label: "Password", Control: ui.Input(ui.InputProps{ID: "design-auth-pw", Type: "password", Placeholder: "••••••••"})})
-				</div>
-				@ui.Button(ui.ButtonProps{Type: "button", Block: true, Text: "Sign in"})
-			</div>
-		</div>
+		@ui.AuthPage(ui.AuthPageProps{Content: designAuthCard()})
 	</div>
+}
+
+templ designAuthCard() {
+	@ui.AuthCard(ui.AuthCardProps{
+		Brand:       "G",
+		Headline:    "Welcome back",
+		Subheadline: "Sign in to GS Studio.",
+		Flash:       ui.AuthFlash(ui.AuthFlashProps{Text: "Try another email address or password."}),
+		Content:     designAuthCardBody(),
+		Footer:      designAuthFooter(),
+	})
+}
+
+templ designAuthCardBody() {
+	@ui.AuthFields(designAuthFieldsInner())
+	@ui.Button(ui.ButtonProps{Type: "button", Block: true, Text: "Sign in"})
+}
+
+templ designAuthFieldsInner() {
+	@ui.Field(ui.FieldProps{ID: "design-auth-email", Label: "Email", Control: ui.Input(ui.InputProps{ID: "design-auth-email", Type: "email", Placeholder: "you@example.com"})})
+	@ui.Field(ui.FieldProps{ID: "design-auth-pw", Label: "Password", Control: ui.Input(ui.InputProps{ID: "design-auth-pw", Type: "password", Placeholder: "••••••••"})})
+}
+
+templ designAuthFooter() {
+	<a href="#auth">Forgot password?</a>
 }
 
 // Chrome helpers --------------------------------------------------------------
@@ -945,4 +955,231 @@ templ designStackBoxes() {
 	<div class="design-stack-box">One</div>
 	<div class="design-stack-box">Two</div>
 	<div class="design-stack-box">Three</div>
+}
+
+// Slice-5 parity additions ------------------------------------------------------
+
+templ designDemoIcons() {
+	<div class="design-icon-grid">
+		for _, name := range ui.IconNames() {
+			<div class="design-icon-cell">
+				@ui.Icon(name, "")
+				<span class="design-icon-name">{ string(name) }</span>
+			</div>
+		}
+	</div>
+}
+
+templ designDemoTabs() {
+	<div class="stack gap-sm">
+		@designLabel("Page-level nav — the server marks the current tab")
+		@ui.Tabs(ui.TabsProps{
+			AriaLabel: "Family sections",
+			Items: []ui.TabItem{
+				{Label: "Overview", Href: "#tabs", Current: true},
+				{Label: "Devices", Href: "#tabs", Count: "12"},
+				{Label: "Options", Href: "#tabs", Count: "3"},
+				{Label: "Compliance", Href: "#tabs"},
+			},
+		})
+	</div>
+}
+
+templ designDemoListGroup() {
+	@ui.ListGroup(ui.ListGroupProps{Content: designListRows()})
+}
+
+templ designListRows() {
+	@ui.ListRow(ui.ListRowProps{
+		Href:     "#list-group",
+		Leading:  ui.Icon(ui.IconFolder, ""),
+		Title:    "Business cards",
+		MetaText: "4 devices · updated 2 hours ago",
+		Trailing: ui.Badge(ui.BadgeProps{Tone: ui.ToneSuccess, Text: "ready"}),
+	})
+	@ui.ListRow(ui.ListRowProps{
+		Href:     "#list-group",
+		Leading:  ui.Icon(ui.IconFolder, ""),
+		Title:    "Posters",
+		MetaText: "7 devices · 1 incomplete",
+		Trailing: ui.Badge(ui.BadgeProps{Tone: ui.ToneWarning, Text: "incomplete"}),
+	})
+	@ui.ListRow(ui.ListRowProps{
+		Leading:  ui.Icon(ui.IconFolder, ""),
+		Title:    "Stickers — static row, no link, no chevron",
+		MetaText: "2 devices",
+		Trailing: ui.Badge(ui.BadgeProps{Tone: ui.ToneDefault, Text: "archived"}),
+	})
+}
+
+templ designDemoProse() {
+	@ui.Prose(ui.ProseProps{Content: designProseBody()})
+}
+
+templ designProseBody() {
+	<h1>Substrate handling</h1>
+	<p>
+		Long-form copy gets a 65ch measure, a relaxed line height, and the
+		<a href="#prose">link voice</a> of the rest of the system. Inline
+		<code>code spans</code> and <strong>strong runs</strong> keep their place
+		in the rhythm.
+	</p>
+	<h2>Press checklist</h2>
+	<ul>
+		<li>Verify the substrate's print group before queuing.</li>
+		<li>Dimensional weight drives the freight estimate.</li>
+		<li>Archived substrates never reach the storefront.</li>
+	</ul>
+	<blockquote>Ship the proof before the press run — every time.</blockquote>
+	<pre><code>{ designProseSample }</code></pre>
+	<h3>Tolerances</h3>
+	<table>
+		<thead>
+			<tr><th>Stock</th><th>Weight</th><th>Tolerance</th></tr>
+		</thead>
+		<tbody>
+			<tr><td>Silk cover</td><td>16pt</td><td>±0.4pt</td></tr>
+			<tr><td>Uncoated cover</td><td>14pt</td><td>±0.6pt</td></tr>
+		</tbody>
+	</table>
+}
+
+templ designDemoFlash() {
+	<div class="stack gap-sm">
+		@designLabel("All four flash keys — values may be bare messages or title + message pairs")
+		@ui.Flash(ui.FlashProps{Messages: []ui.FlashMessage{
+			{Kind: ui.FlashNotice, Message: "Signed in."},
+			{Kind: ui.FlashSuccess, Title: "Saved", Message: "Saved 3 families."},
+			{Kind: ui.FlashAlert, Message: "Try another email address or password."},
+			{Kind: ui.FlashError, Title: "Save failed", Message: "Fix the issues above and try again."},
+		}})
+	</div>
+}
+
+templ designDemoConfirmInterceptor() {
+	<div class="stack gap-sm">
+		<div class="design-row">
+			<form method="get" action="#confirm-interceptor" data-ui-confirm="Default copy everywhere else — Confirm resubmits this demo form.">
+				@ui.Button(ui.ButtonProps{Type: "submit", Variant: "secondary", Text: "Submit with confirm"})
+			</form>
+			<form method="get" action="#confirm-interceptor">
+				@ui.Button(ui.ButtonProps{
+					Type:    "submit",
+					Variant: "danger",
+					Text:    "Archive (overrides)",
+					Attrs: ui.Attrs(
+						"data-ui-confirm", "It'll be hidden by default. Toggle “Show archived” at the top to bring it back into view.",
+						"data-ui-confirm-title", "Archive \"Business cards\"?",
+						"data-ui-confirm-label", "Archive",
+						"data-ui-confirm-tone", "danger",
+					),
+				})
+			</form>
+			@ui.ButtonLink(ui.LinkButtonProps{Href: "#confirm-interceptor", Variant: "link", Text: "Link with confirm", Attrs: ui.Attrs("data-ui-confirm", "Links work too — Confirm follows the href.")})
+		</div>
+		<p style="font-size: var(--text-sm); color: var(--text-muted)">One dialog per layout (ui.GlobalConfirm) serves every element carrying data-ui-confirm; per-element attributes override title, labels, and tone.</p>
+		@ui.GlobalConfirm()
+	</div>
+}
+
+templ designDemoUnsavedChanges() {
+	@ui.Card(ui.CardProps{Padded: true, Content: designUnsavedCard()})
+}
+
+templ designUnsavedCard() {
+	@ui.CardBody(ui.CardBodyProps{Content: designUnsavedForm()})
+}
+
+templ designUnsavedForm() {
+	<form data-ui-dirty-guard action="#unsaved-changes" method="get">
+		<div class="stack gap-md">
+			@ui.Field(ui.FieldProps{ID: "design-dirty-name", Label: "Family name", Hint: "Baseline from the rendered value — edit to arm the guard.", Control: ui.Input(ui.InputProps{ID: "design-dirty-name", Name: "name", Value: "Business cards"})})
+			@ui.Field(ui.FieldProps{ID: "design-dirty-code", Label: "Harmonize code", Hint: "Baseline pinned via data-baseline-value.", Control: ui.Input(ui.InputProps{ID: "design-dirty-code", Name: "code", Value: "4911.99", Mono: true, Attrs: ui.Attrs("data-baseline-value", "4911.99")})})
+			<p class="design-dirty-note">Dirty — the form now carries data-ui-dirty="true" and navigating away warns.</p>
+			<div class="form-actions">
+				<button type="reset" class={ ui.ButtonClasses("secondary", "") }>Reset</button>
+				@ui.Button(ui.ButtonProps{Type: "submit", Text: "Save"})
+			</div>
+		</div>
+	</form>
+}
+
+templ designDemoSwap() {
+	@ui.Prose(ui.ProseProps{Content: designSwapDoc()})
+}
+
+templ designSwapDoc() {
+	<p>
+		A form opting in with <code>data-ui-swap</code> posts via
+		<code>fetch</code> and patches the page in place — no client templates,
+		no JSON. Without JS it submits natively and the server renders the full
+		page.
+	</p>
+	<ul>
+		<li>The request carries <code>X-UI-Swap: 1</code> so the handler can branch fragment-render vs redirect.</li>
+		<li>The response is <code>text/html</code>: every top-level element with an <code>id</code> replaces the document element with the same id; fragments without a counterpart are ignored. Error re-renders (422) use the same shape.</li>
+		<li>A redirected response is followed as a full navigation, preserving POST→redirect→GET for handlers that don't fragment-render.</li>
+		<li>After patching, a <code>ui:swap</code> event fires on <code>document</code> with the swapped ids, for focus restore and friends.</li>
+	</ul>
+	<pre><code>{ designSwapSample }</code></pre>
+}
+
+templ designDemoAppShell() {
+	<div class="stack gap-lg">
+		<div>
+			@designLabel("Desktop — static sidebar (shell container ≥ 48rem)")
+			<div class="design-shell-frame">
+				@ui.Shell(ui.ShellProps{
+					Sidebar:      designShellSidebar(),
+					MobileHeader: designShellMobileHeader(),
+					Content:      designShellContent(),
+				})
+			</div>
+		</div>
+		<div>
+			@designLabel("Narrow — drawer mode; the hamburger opens the sidebar over a scrim")
+			<div class="design-shell-frame narrow">
+				@ui.Shell(ui.ShellProps{
+					Sidebar:      designShellSidebar(),
+					MobileHeader: designShellMobileHeader(),
+					Content:      designShellContent(),
+				})
+			</div>
+		</div>
+	</div>
+}
+
+templ designShellSidebar() {
+	@ui.ShellSidebarHeader(ui.ShellSidebarHeaderProps{
+		Brand:   ui.ShellBrand(ui.ShellBrandProps{Href: "#app-shell", Prefix: "GS", Name: "Studio"}),
+		Actions: ui.ThemeToggle(ui.ThemeToggleProps{}),
+	})
+	@ui.ShellNav(designShellNavItems())
+	@ui.ShellSidebarFooter(designShellFooter())
+}
+
+templ designShellNavItems() {
+	@ui.ShellNavSection("Catalog")
+	@ui.ShellNavItem(ui.ShellNavItemProps{Href: "#app-shell", Label: "Families", Icon: ui.Icon(ui.IconStack, ""), Active: true})
+	@ui.ShellNavItem(ui.ShellNavItemProps{Href: "#app-shell", Label: "Products", Icon: ui.Icon(ui.IconBox, "")})
+	@ui.ShellNavSection("System")
+	@ui.ShellNavItem(ui.ShellNavItemProps{Href: "#app-shell", Label: "Design system", Icon: ui.Icon(ui.IconSwatch, "")})
+}
+
+templ designShellFooter() {
+	<span class="muted" style="font-size: var(--text-xs)">signed in as ops@example.com</span>
+}
+
+templ designShellMobileHeader() {
+	@ui.ShellMobileHeader(ui.ShellMobileHeaderProps{
+		Brand:   ui.ShellBrand(ui.ShellBrandProps{Href: "#app-shell", Prefix: "GS", Name: "Studio"}),
+		Actions: ui.ThemeToggle(ui.ThemeToggleProps{}),
+	})
+}
+
+templ designShellContent() {
+	<div class="page">
+		@ui.PageHeader(ui.PageHeaderProps{Title: "Families", Sub: "Page content scrolls inside .shell-content; the sidebar stays put."})
+		@ui.Flash(ui.FlashProps{Messages: []ui.FlashMessage{{Kind: ui.FlashNotice, Message: "Flash renders below the page header, per convention."}}})
+	</div>
 }

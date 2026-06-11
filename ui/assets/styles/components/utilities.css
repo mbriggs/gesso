@@ -26,6 +26,14 @@
     gap: var(--space-8);
   }
 
+  /* Inline icon glyph (ui.Icon). Em-relative so icons track the font size
+     of whatever they sit in — buttons, nav items, meta lines. */
+  .icon {
+    width: 1.25em;
+    height: 1.25em;
+    flex-shrink: 0;
+  }
+
   .sr-only {
     position: absolute;
     width: 1px;

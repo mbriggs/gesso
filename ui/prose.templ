@@ -1,0 +1,12 @@
+package ui
+
+// Prose wraps long-form HTML (docs, helper copy, rendered markdown) in the
+// reader-mode typography styles: measure cap, heading scale, list bullets,
+// code blocks, and quote rails (see prose.css).
+templ Prose(p ProseProps) {
+	<div class={ Class("prose", p.Class) }>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}

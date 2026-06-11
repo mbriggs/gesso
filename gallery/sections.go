@@ -27,6 +27,7 @@ func Sections() []SectionGroup {
 			Title: "Product surfaces",
 			Sections: []Section{
 				{ID: "product-surface", Title: "Product surface", Demo: designDemoProductSurface()},
+				{ID: "app-shell", Title: "App shell", Demo: designDemoAppShell()},
 				{ID: "page-header", Title: "Page header", Demo: designDemoPageHeader()},
 				{ID: "tables", Title: "Tables", Demo: designDemoTables()},
 				{ID: "auth", Title: "Auth surface", Demo: designDemoAuth()},
@@ -38,6 +39,8 @@ func Sections() []SectionGroup {
 				{ID: "tokens", Title: "Tokens", Demo: designDemoTokens()},
 				{ID: "theme-preview", Title: "Theme preview", Demo: designDemoThemePreview()},
 				{ID: "typography", Title: "Typography", Demo: designDemoTypography()},
+				{ID: "icons", Title: "Icons", Demo: designDemoIcons()},
+				{ID: "prose", Title: "Prose", Demo: designDemoProse()},
 			},
 		},
 		{
@@ -48,6 +51,7 @@ func Sections() []SectionGroup {
 				{ID: "menus", Title: "Menus", Demo: designDemoMenus()},
 				{ID: "modal", Title: "Modal", Demo: designDemoModal()},
 				{ID: "confirm-dialog", Title: "Confirm dialog", Demo: designDemoConfirmDialog()},
+				{ID: "confirm-interceptor", Title: "Confirm interceptor", Demo: designDemoConfirmInterceptor()},
 			},
 		},
 		{
@@ -62,12 +66,14 @@ func Sections() []SectionGroup {
 		{
 			Title: "Navigation",
 			Sections: []Section{
+				{ID: "tabs", Title: "Tabs", Demo: designDemoTabs()},
 				{ID: "pagination", Title: "Pagination", Demo: designDemoPagination()},
 			},
 		},
 		{
 			Title: "Feedback",
 			Sections: []Section{
+				{ID: "flash", Title: "Flash", Demo: designDemoFlash()},
 				{ID: "alerts", Title: "Alerts", Demo: designDemoAlerts()},
 				{ID: "feedback", Title: "Feedback", Demo: designDemoFeedback()},
 				{ID: "stage-bar", Title: "Stage bar", Demo: designDemoStageBar()},
@@ -79,12 +85,35 @@ func Sections() []SectionGroup {
 			Sections: []Section{
 				{ID: "badges", Title: "Badges", Demo: designDemoBadges()},
 				{ID: "cards", Title: "Cards", Demo: designDemoCards()},
+				{ID: "list-group", Title: "List group", Demo: designDemoListGroup()},
 				{ID: "stack", Title: "Stack", Demo: designDemoStack()},
 				{ID: "tooltips", Title: "Tooltips", Demo: designDemoTooltips()},
 			},
 		},
+		{
+			Title: "Behaviors",
+			Sections: []Section{
+				{ID: "unsaved-changes", Title: "Unsaved changes", Demo: designDemoUnsavedChanges()},
+				{ID: "swap", Title: "Swap", Demo: designDemoSwap()},
+			},
+		},
 	}
 }
+
+// designSwapSample shows the swap-module wire convention; rendered escaped
+// inside the swap demo's code block.
+const designSwapSample = `<form method="post" action="/families/42/matrix" data-ui-swap>
+  …editor fields…
+</form>
+
+→ POST /families/42/matrix    (X-UI-Swap: 1)
+
+← 200 text/html — top-level elements with ids replace their counterparts:
+<section id="family_matrix_42">…re-rendered matrix…</section>
+<span id="family_readiness_42">…refreshed badge…</span>`
+
+const designProseSample = `bin/check
+all checks passed`
 
 var designPalettes = []struct {
 	Name  string

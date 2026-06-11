@@ -1,0 +1,214 @@
+/* App shell: sidebar + scrolling content column, mobile drawer, theme
+   toggle. The shell is a container so its breakpoint follows the space it
+   actually gets (and the gallery can demo both modes in framed previews);
+   container layout containment also keeps the fixed-position drawer inside
+   the shell's box. The shell is the page's scroll surface — body stays
+   fixed (base.css). */
+@layer components {
+  .shell {
+    container: shell / inline-size;
+    display: flex;
+    height: 100%;
+    background: var(--surface-2);
+  }
+
+  /* Mobile-first: the sidebar is an off-canvas drawer; .open slides it in
+     (js/shell.js). The curve decelerates as the panel lands and
+     accelerates as it leaves. */
+  .shell-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    width: 16rem;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    transform: translateX(-100%);
+    transition: transform 220ms var(--ease-in-out);
+  }
+  .shell-sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-overlay);
+  }
+  .shell-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 29;
+    background: rgb(0 0 0 / 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms var(--ease-out);
+  }
+  .shell-scrim.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .shell-sidebar,
+    .shell-scrim {
+      transition: none;
+    }
+  }
+
+  .shell-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .shell-content-inner {
+    flex: 1;
+    padding-block: var(--space-6);
+  }
+
+  .shell-mobile-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-3);
+    background: var(--surface-1);
+    border-bottom: 1px solid var(--border-1);
+  }
+  .shell-mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: auto;
+  }
+  .shell-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.375rem;
+    color: var(--text-2);
+    cursor: pointer;
+  }
+  .shell-menu-toggle:hover {
+    background: var(--surface-sunken);
+  }
+  .shell-menu-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+
+  .shell-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-3) var(--space-2);
+  }
+  .shell-sidebar-header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+  }
+  .shell-sidebar-brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-1);
+    color: var(--sidebar-text-1);
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+  }
+  .shell-sidebar-brand-prefix {
+    color: var(--color-primary-500);
+  }
+  html.is-dark .shell-sidebar-brand-prefix {
+    color: var(--color-primary-400);
+  }
+
+  .shell-sidebar-nav {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-2) var(--space-3) var(--space-4);
+  }
+  .shell-nav-item:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  .shell-nav-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--sidebar-text-muted);
+    transition: color 160ms var(--ease-in-out);
+  }
+  .shell-nav-item:hover .shell-nav-icon,
+  .shell-nav-item[data-active="true"] .shell-nav-icon {
+    color: var(--sidebar-text-1);
+  }
+
+  .shell-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    border-top: 1px solid var(--sidebar-border);
+  }
+
+  /* Theme toggle — stateless button; theme.js flips html.is-dark and the
+     glyph swap below follows from the class. */
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.375rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition:
+      background-color 120ms ease,
+      color 120ms ease;
+  }
+  .theme-toggle:hover {
+    color: var(--text-1);
+    background: var(--sidebar-hover-bg);
+  }
+  .theme-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  .theme-toggle-moon {
+    display: inline-flex;
+  }
+  .theme-toggle-sun {
+    display: none;
+  }
+  html.is-dark .theme-toggle-moon {
+    display: none;
+  }
+  html.is-dark .theme-toggle-sun {
+    display: inline-flex;
+  }
+
+  @container shell (width >= 48rem) {
+    .shell-sidebar {
+      position: static;
+      flex-shrink: 0;
+      transform: none;
+    }
+    .shell-sidebar.open {
+      box-shadow: none;
+    }
+    .shell-scrim,
+    .shell-mobile-header {
+      display: none;
+    }
+  }
+}

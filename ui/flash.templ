@@ -1,0 +1,19 @@
+package ui
+
+// Flash renders the request's flash messages as a stack of toned alerts.
+// It renders nothing when there are no messages, so layouts can place it
+// unconditionally — by convention right below the page header.
+templ Flash(p FlashProps) {
+	if len(p.Messages) > 0 {
+		<div class={ Class("flash", p.Class) }>
+			for _, message := range p.Messages {
+				@Alert(AlertProps{
+					Tone:  FlashTone(message.Kind),
+					Icon:  Icon(flashIcon(message.Kind), ""),
+					Title: message.Title,
+					Text:  message.Message,
+				})
+			}
+		</div>
+	}
+}

@@ -12,7 +12,7 @@ func Attrs(values ...any) templ.Attributes {
 		panic("ui.Attrs expects key/value pairs")
 	}
 	out := make(templ.Attributes, len(values)/2)
-	for i := 0; i < len(values); i += 2 {
+	for i := 0; i+1 < len(values); i += 2 {
 		key, ok := values[i].(string)
 		if !ok {
 			panic("ui.Attrs key must be a string")

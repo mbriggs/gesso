@@ -1,0 +1,56 @@
+package ui
+
+import templpkg "github.com/a-h/templ"
+
+// AuthPage is the signed-out surface: cool-dark gradient backdrop, drifting
+// glow accents, and whatever the host centers on it (usually an AuthCard).
+templ AuthPage(p AuthPageProps) {
+	<div class={ Class("auth-page", p.Class) }>
+		<span class="auth-glow indigo" aria-hidden="true"></span>
+		<span class="auth-glow cyan" aria-hidden="true"></span>
+		if p.Content != nil {
+			@p.Content
+		}
+	</div>
+}
+
+templ AuthCard(p AuthCardProps) {
+	<div class={ Class("auth-card", p.Class) }>
+		if p.Brand != "" {
+			<div class="auth-brand">
+				<span class="brand-mark glow" aria-hidden="true">{ p.Brand }</span>
+			</div>
+		}
+		if p.Headline != "" {
+			<h1 class="auth-headline">{ p.Headline }</h1>
+		}
+		if p.Subheadline != "" {
+			<p class="auth-subheadline">{ p.Subheadline }</p>
+		}
+		if p.Flash != nil {
+			@p.Flash
+		}
+		if p.Content != nil {
+			@p.Content
+		}
+		if p.Footer != nil {
+			<div class="auth-card-footer">
+				@p.Footer
+			</div>
+		}
+	</div>
+}
+
+// AuthFlash is the in-card flash line — terser than a full Alert so it fits
+// the card's vertical rhythm.
+templ AuthFlash(p AuthFlashProps) {
+	<p class={ Class("auth-card-flash", ClassIf(p.OK, "ok"), p.Class) } role={ authFlashRole(p) }>{ p.Text }</p>
+}
+
+templ AuthFields(content templpkg.Component) {
+	<div class="auth-field-stack">
+		if content != nil {
+			@content
+		}
+	</div>
+}

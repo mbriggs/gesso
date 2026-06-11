@@ -13,3 +13,7 @@ import "ui/menu";
 import "ui/modal";
 import "ui/combobox";
 import "ui/scrollspy";
+import "ui/shell";
+import "ui/confirm";
+import "ui/dirty";
+import "ui/swap";
