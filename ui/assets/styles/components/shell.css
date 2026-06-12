@@ -23,7 +23,7 @@
     z-index: 30;
     display: flex;
     flex-direction: column;
-    width: 16rem;
+    width: 18rem;
     background: var(--sidebar-bg);
     border-right: 1px solid var(--sidebar-border);
     transform: translateX(-100%);
@@ -112,21 +112,22 @@
     align-items: center;
     gap: var(--space-1);
   }
+  /* Quiet uppercase wordmark (Bulkhead parity) — the brand reads as a
+     label, not a logo; the prefix sits muted beside the name. */
   .shell-sidebar-brand {
     display: inline-flex;
     align-items: baseline;
     gap: var(--space-1);
     color: var(--sidebar-text-1);
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 700;
-    letter-spacing: var(--tracking-tight);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
   .shell-sidebar-brand-prefix {
-    color: var(--color-primary-500);
-  }
-  html.is-dark .shell-sidebar-brand-prefix {
-    color: var(--color-primary-400);
+    color: var(--sidebar-text-muted);
+    font-weight: 500;
   }
 
   .shell-sidebar-nav {
@@ -162,27 +163,30 @@
   }
 
   /* Theme toggle — stateless button; theme.js flips html.is-dark and the
-     glyph swap below follows from the class. */
+     glyph swap below follows from the class. Stays quiet (Bulkhead
+     parity): no hover fill, no padding bloating it past the wordmark;
+     very faded by default so it reads as ambient affordance, fading up
+     on hover rather than filling. */
   .theme-toggle {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 0.375rem;
-    color: var(--text-muted);
+    padding: 0;
+    color: var(--sidebar-text-muted);
+    background: transparent;
+    border: none;
+    opacity: 0.35;
     cursor: pointer;
     transition:
-      background-color 120ms ease,
-      color 120ms ease;
+      color 160ms var(--ease-in-out),
+      opacity 160ms var(--ease-in-out);
   }
   .theme-toggle:hover {
-    color: var(--text-1);
-    background: var(--sidebar-hover-bg);
+    opacity: 0.7;
   }
   .theme-toggle:focus-visible {
     outline: none;
     box-shadow: var(--focus-ring);
+    opacity: 0.7;
   }
   .theme-toggle-moon {
     display: inline-flex;
