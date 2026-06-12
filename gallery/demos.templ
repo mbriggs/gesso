@@ -1167,13 +1167,38 @@ templ designShellNavItems() {
 }
 
 templ designShellFooter() {
-	<span class="muted" style="font-size: var(--text-xs)">signed in as ops@example.com</span>
+	@ui.ShellSidebarProject(ui.ShellSidebarProjectProps{Name: "GelaSkins"})
+	@ui.ShellSidebarUserMenu(ui.ShellSidebarUserMenuProps{
+		Email:   "ops@example.com",
+		Content: designShellUserMenuItems(),
+	})
+}
+
+templ designShellUserMenuItems() {
+	<a class="menu-item" role="menuitem" href="#app-shell">
+		@ui.Icon(ui.IconSwatch, "menu-item-icon")
+		<span class="menu-item-label">Design system</span>
+	</a>
+	<form class="menu-item-form" method="post" action="#app-shell">
+		<button type="submit" class="menu-item" role="menuitem">
+			<span class="menu-item-label">Sign out</span>
+		</button>
+	</form>
 }
 
 templ designShellMobileHeader() {
 	@ui.ShellMobileHeader(ui.ShellMobileHeaderProps{
 		Brand:   ui.ShellBrand(ui.ShellBrandProps{Href: "#app-shell", Prefix: "GS", Name: "Studio"}),
 		Actions: ui.ThemeToggle(ui.ThemeToggleProps{}),
+		End:     designShellFooterEnd(),
+	})
+}
+
+templ designShellFooterEnd() {
+	@ui.ShellSidebarProject(ui.ShellSidebarProjectProps{Name: "GelaSkins"})
+	@ui.ShellSidebarUserMenu(ui.ShellSidebarUserMenuProps{
+		Email:   "ops@example.com",
+		Content: designShellUserMenuItems(),
 	})
 }
 

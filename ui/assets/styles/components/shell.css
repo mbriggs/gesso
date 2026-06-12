@@ -76,11 +76,25 @@
     background: var(--surface-1);
     border-bottom: 1px solid var(--border-1);
   }
-  .shell-mobile-actions {
+  .shell-mobile-header-start,
+  .shell-mobile-header-end {
     display: flex;
     align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .shell-mobile-header-end {
     gap: var(--space-2);
     margin-left: auto;
+  }
+  /* In the topbar end-slot the chip sits next to icon buttons, not in a
+     footer split — drop the grow so it doesn't push the avatar off the
+     right edge, and cap the name so a long brand truncates. */
+  .shell-mobile-header .shell-sidebar-project {
+    flex: 0 0 auto;
+  }
+  .shell-mobile-header .shell-sidebar-project-name {
+    max-width: 10rem;
   }
   .shell-menu-toggle {
     display: inline-flex;
@@ -154,12 +168,104 @@
     color: var(--sidebar-text-1);
   }
 
+  /* Sidebar footer — split layout: a context chip (the active
+     account/workspace) on the left, the avatar user-menu on the right.
+     The hairline makes it read as a peer of the brand header, not a nav
+     item. */
   .shell-sidebar-footer {
     display: flex;
-    flex-direction: column;
-    gap: var(--space-1);
-    padding: var(--space-3);
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.625rem var(--space-3);
     border-top: 1px solid var(--sidebar-border);
+  }
+  .shell-sidebar-project {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 1;
+    min-width: 0;
+    padding: 0.375rem var(--space-2);
+    border: 0;
+    border-radius: 0.4375rem;
+    background: transparent;
+    color: var(--sidebar-text-1);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    transition: background-color 120ms ease;
+  }
+  a.shell-sidebar-project:hover,
+  a.shell-sidebar-project:focus-visible {
+    background: var(--sidebar-hover-bg);
+    outline: none;
+  }
+  .shell-sidebar-project-dot {
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: 999px;
+    background: var(--project-dot-color, var(--color-primary-500));
+    box-shadow: 0 0 0 3px
+      color-mix(in oklab, var(--project-dot-color, var(--color-primary-500)) 22%, transparent);
+    flex-shrink: 0;
+  }
+  .shell-sidebar-project-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .shell-sidebar-user {
+    flex-shrink: 0;
+  }
+  .shell-sidebar-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    list-style: none;
+    background: var(
+      --avatar-bg,
+      linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700))
+    );
+    color: var(--color-white);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    user-select: none;
+    cursor: pointer;
+    transition:
+      box-shadow 120ms ease,
+      transform 120ms ease;
+  }
+  .shell-sidebar-avatar::-webkit-details-marker {
+    display: none;
+  }
+  .shell-sidebar-avatar:hover,
+  .shell-sidebar-avatar:focus-visible,
+  details[open] > .shell-sidebar-avatar {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--sidebar-bg),
+      0 0 0 4px color-mix(in oklab, var(--color-primary-500) 55%, transparent);
+  }
+  .shell-sidebar-user-email {
+    padding: 0.375rem var(--space-2) var(--space-2);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-1);
+    margin-bottom: var(--space-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* Theme toggle — stateless button; theme.js flips html.is-dark and the

@@ -84,23 +84,56 @@ templ ShellSidebarFooter(content templpkg.Component) {
 	</div>
 }
 
+templ ShellSidebarProject(p ShellSidebarProjectProps) {
+	if p.Href != "" {
+		<a class="shell-sidebar-project" href={ templpkg.SafeURL(p.Href) }>
+			<span class="shell-sidebar-project-dot" aria-hidden="true"></span>
+			<span class="shell-sidebar-project-name">{ p.Name }</span>
+		</a>
+	} else {
+		<div class="shell-sidebar-project">
+			<span class="shell-sidebar-project-dot" aria-hidden="true"></span>
+			<span class="shell-sidebar-project-name">{ p.Name }</span>
+		</div>
+	}
+}
+
+// ShellSidebarUserMenu rides the same details/menu-panel machinery as Menu,
+// so menu.js keyboard nav and outside-click close apply unchanged.
+templ ShellSidebarUserMenu(p ShellSidebarUserMenuProps) {
+	<details class="menu-root shell-sidebar-user">
+		<summary class="shell-sidebar-avatar" aria-label="Open account menu" aria-haspopup="menu">{ avatarInitial(p) }</summary>
+		<div class="menu-panel top end shell-sidebar-user-menu" role="menu" aria-label="Account menu">
+			<div class="shell-sidebar-user-email" title={ p.Email }>{ p.Email }</div>
+			if p.Content != nil {
+				@p.Content
+			}
+		</div>
+	</details>
+}
+
 templ ShellMobileHeader(p ShellMobileHeaderProps) {
 	<header class="shell-mobile-header">
-		<button
-			type="button"
-			class="shell-menu-toggle"
-			data-ui-shell-toggle
-			aria-expanded="false"
-			aria-label={ stringDefault(p.MenuLabel, "Open navigation") }
-		>
-			@Icon(IconMenu, "")
-		</button>
-		if p.Brand != nil {
-			@p.Brand
-		}
-		if p.Actions != nil {
-			<div class="shell-mobile-actions">
+		<div class="shell-mobile-header-start">
+			<button
+				type="button"
+				class="shell-menu-toggle"
+				data-ui-shell-toggle
+				aria-expanded="false"
+				aria-label={ stringDefault(p.MenuLabel, "Open navigation") }
+			>
+				@Icon(IconMenu, "")
+			</button>
+			if p.Brand != nil {
+				@p.Brand
+			}
+			if p.Actions != nil {
 				@p.Actions
+			}
+		</div>
+		if p.End != nil {
+			<div class="shell-mobile-header-end">
+				@p.End
 			</div>
 		}
 	</header>

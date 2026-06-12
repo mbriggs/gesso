@@ -183,13 +183,36 @@
   }
 
   .page {
+    --page-pad: var(--space-4);
     container-type: inline-size;
     width: 100%;
     max-width: 80rem;
     margin-left: auto;
     margin-right: auto;
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
+    padding-left: var(--page-pad);
+    padding-right: var(--page-pad);
+  }
+  .separator {
+    border: 0;
+    border-top: 1px solid var(--border-1);
+  }
+  .separator.sm {
+    margin-top: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+  .separator.md {
+    margin-top: var(--space-7);
+    margin-bottom: var(--space-7);
+  }
+  .separator.lg {
+    margin-top: 2.25rem;
+    margin-bottom: 2.25rem;
+  }
+  /* The header's closing rule bleeds to the content column's edges —
+     PageHeader renders inside `.page`, so back out its padding. */
+  .page-header-separator {
+    margin-left: calc(var(--page-pad, var(--space-4)) * -1);
+    margin-right: calc(var(--page-pad, var(--space-4)) * -1);
   }
   .breadcrumbs-list {
     list-style: none;
@@ -266,6 +289,27 @@
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: center;
+  }
+  .page-header-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: var(--space-1);
+  }
+  .page-header-datum {
+    display: flex;
+    align-items: center;
+    margin-top: var(--space-2);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  .page-header-datum-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    margin-right: var(--space-1_5);
+    color: var(--color-zinc-400);
   }
   .page-header-actions {
     display: flex;

@@ -14,7 +14,7 @@ templ Breadcrumbs(p BreadcrumbsProps) {
 						<span class="breadcrumbs-item" aria-current="page">{ item.Label }</span>
 					}
 					if !last {
-						<span class="breadcrumbs-separator" aria-hidden="true">/</span>
+						@Icon(IconChevronRight, "breadcrumbs-separator")
 					}
 				</li>
 			}
@@ -40,11 +40,29 @@ templ PageHeader(p PageHeaderProps) {
 			if p.Sub != "" {
 				<p class="page-header-sub">{ p.Sub }</p>
 			}
+			if p.Meta != nil {
+				<div class="page-header-meta">
+					@p.Meta
+				</div>
+			}
 		</div>
 		if p.Actions != nil {
 			<div class="page-header-actions">@p.Actions</div>
 		}
 	</header>
+	if !p.NoSeparator {
+		<hr class="separator md page-header-separator"/>
+	}
+}
+
+// PageDatum is one icon-plus-text fact in the header's meta row.
+templ PageDatum(icon IconName, content templpkg.Component) {
+	<div class="page-header-datum">
+		@Icon(icon, "page-header-datum-icon")
+		if content != nil {
+			@content
+		}
+	</div>
 }
 
 templ SectionHead(p SectionHeadProps) {

@@ -9,7 +9,9 @@ type PageHeaderProps struct {
 	Breadcrumbs templ.Component
 	Eyebrow     templ.Component
 	Badges      templ.Component
+	Meta        templ.Component // datum row under the title (PageDatum et al.)
 	Actions     templ.Component
+	NoSeparator bool // suppress the full-bleed rule under the header
 }
 
 type BreadcrumbItem struct {
