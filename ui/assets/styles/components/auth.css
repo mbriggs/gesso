@@ -3,11 +3,18 @@
 @layer components {
   /* Auth surface
    *
-   * Cool cyan/indigo gradient against a deep-slate backdrop. The card sits
-   * on top in surface-1 (token-driven) so light/dark mode follow the rest
-   * of the app while the page background stays cool-dark either way. */
+   * Cool cyan/indigo gradient against a deep-slate backdrop. The surface
+   * is intentionally dark in both themes — these token overrides scope
+   * the dark palette to this subtree so the card and its children sit
+   * dark on the gradient without clobbering the app shell's tokens. */
 
   .auth-page {
+    --surface-1: var(--color-zinc-800);
+    --text-1: var(--color-zinc-100);
+    --text-2: var(--color-zinc-300);
+    --text-muted: var(--color-zinc-400);
+    --border-1: var(--color-zinc-700);
+
     position: relative;
     min-height: 100dvh;
     display: flex;
@@ -229,27 +236,23 @@
   }
 
   /* In-card flash — terser than a full Alert so it fits the card rhythm.
-     Default styling is the failure beat; `.ok` is the success one. */
+     Default styling is the failure beat; `.ok` is the success one. The
+     auth surface is always dark, so these use the dark-leaning colors
+     unconditionally. */
   .auth-card-flash {
     margin: 0 0 var(--space-4);
     padding: var(--space-2) var(--space-3);
     border-radius: 0.5rem;
     font-size: var(--text-sm);
     line-height: var(--text-sm--line-height);
-    color: var(--color-danger-700);
+    color: var(--color-danger-300);
     background: color-mix(in oklab, var(--color-danger-500) 10%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-danger-500) 25%, transparent);
   }
   .auth-card-flash.ok {
-    color: var(--color-success-700);
+    color: var(--color-success-300);
     background: color-mix(in oklab, var(--color-success-500) 10%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-success-500) 25%, transparent);
-  }
-  html.is-dark .auth-card-flash {
-    color: var(--color-danger-300);
-  }
-  html.is-dark .auth-card-flash.ok {
-    color: var(--color-success-300);
   }
 
   .auth-card-footer {
@@ -258,13 +261,10 @@
     font-size: var(--text-sm);
   }
   .auth-card-footer a {
-    color: var(--color-primary-600);
+    color: var(--color-primary-400);
     font-weight: 500;
   }
   .auth-card-footer a:hover {
     text-decoration: underline;
-  }
-  html.is-dark .auth-card-footer a {
-    color: var(--color-primary-400);
   }
 }
