@@ -8,9 +8,10 @@ package ui
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-// Flash renders the request's flash messages as a stack of toned alerts.
-// It renders nothing when there are no messages, so layouts can place it
-// unconditionally — by convention right below the page header.
+// Flash renders flash messages as a stack of toned alerts, or nothing
+// when there are none. PageHeader renders the request's messages (carried
+// by WithFlash) below the header automatically; placing Flash directly is
+// for layouts without a page header.
 func Flash(p FlashProps) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

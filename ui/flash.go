@@ -1,5 +1,23 @@
 package ui
 
+import "context"
+
+// flashCtxKey carries the request's flash messages to PageHeader, which
+// renders them right below the header.
+type flashCtxKey struct{}
+
+// WithFlash stores the request's flash messages on the render context.
+// The host's layout calls this once before rendering the page body;
+// PageHeader picks the messages up and renders them below the header.
+func WithFlash(ctx context.Context, messages []FlashMessage) context.Context {
+	return context.WithValue(ctx, flashCtxKey{}, messages)
+}
+
+func ctxFlash(ctx context.Context) []FlashMessage {
+	messages, _ := ctx.Value(flashCtxKey{}).([]FlashMessage)
+	return messages
+}
+
 // FlashKind is the four-key flash vocabulary the host's session layer
 // speaks: notice, success, alert, error.
 type FlashKind string

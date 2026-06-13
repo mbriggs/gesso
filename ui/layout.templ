@@ -53,6 +53,7 @@ templ PageHeader(p PageHeaderProps) {
 	if !p.NoSeparator {
 		<hr class="separator md page-header-separator"/>
 	}
+	@Flash(FlashProps{Messages: ctxFlash(ctx)})
 }
 
 // PageDatum is one icon-plus-text fact in the header's meta row.

@@ -1,6 +1,8 @@
 package ui_test
 
 import (
+	"bytes"
+	"context"
 	"strings"
 	"testing"
 
@@ -30,6 +32,30 @@ func TestFlashMapsKindsToTones(t *testing.T) {
 
 	if empty := renderComponent(t, ui.Flash(ui.FlashProps{})); strings.Contains(empty, "flash") {
 		t.Fatalf("empty flash should render nothing:\n%s", empty)
+	}
+}
+
+func TestPageHeaderRendersFlashFromContext(t *testing.T) {
+	ctx := ui.WithFlash(context.Background(), []ui.FlashMessage{
+		{Kind: ui.FlashError, Message: "2 active device(s) reference this value"},
+	})
+	var b bytes.Buffer
+	if err := ui.PageHeader(ui.PageHeaderProps{Title: "Acer"}).Render(ctx, &b); err != nil {
+		t.Fatalf("render page header: %v", err)
+	}
+	got := b.String()
+
+	flashAt := strings.Index(got, `<div class="flash">`)
+	if flashAt == -1 {
+		t.Fatalf("page header should render the ctx flash:\n%s", got)
+	}
+	if sepAt := strings.Index(got, "page-header-separator"); flashAt < sepAt {
+		t.Fatalf("flash should render below the header, not inside it:\n%s", got)
+	}
+
+	plain := renderComponent(t, ui.PageHeader(ui.PageHeaderProps{Title: "Acer"}))
+	if strings.Contains(plain, `class="flash"`) {
+		t.Fatalf("page header without ctx flash should render no flash region:\n%s", plain)
 	}
 }
 

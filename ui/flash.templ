@@ -1,8 +1,9 @@
 package ui
 
-// Flash renders the request's flash messages as a stack of toned alerts.
-// It renders nothing when there are no messages, so layouts can place it
-// unconditionally — by convention right below the page header.
+// Flash renders flash messages as a stack of toned alerts, or nothing
+// when there are none. PageHeader renders the request's messages (carried
+// by WithFlash) below the header automatically; placing Flash directly is
+// for layouts without a page header.
 templ Flash(p FlashProps) {
 	if len(p.Messages) > 0 {
 		<div class={ Class("flash", p.Class) }>
