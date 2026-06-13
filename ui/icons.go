@@ -132,14 +132,9 @@ var icons = map[IconName]iconShape{
 		"m11 8 2.3-2.3a2.4 2.4 0 0 1 3.4 0l2.6 2.6a2.4 2.4 0 0 1 0 3.4l-7.6 7.5",
 		"M7 17h.01",
 	}},
-	IconGrip: {Solid: true, Paths: []string{
-		"M10.25 5a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z",
-		"M16.25 5a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z",
-		"M10.25 12a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z",
-		"M16.25 12a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z",
-		"M10.25 19a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z",
-		"M16.25 19a1.25 1.25 0 1 1-2.5 0 1.25 1.25 0 0 1 2.5 0Z",
-	}},
+	// Two short bars, not dots — dots at handle size read as the kebab,
+	// and three bars read as the drawer hamburger.
+	IconGrip: {Paths: []string{"M6 9h12", "M6 15h12"}},
 	IconKebab: {Solid: true, Paths: []string{
 		"M13.5 5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z",
 		"M13.5 12a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z",
