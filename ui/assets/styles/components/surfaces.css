@@ -70,9 +70,11 @@
     font-weight: 500;
   }
   .alert-content {
-    margin-top: var(--space-2);
     font-size: 0.875rem;
     line-height: 1.25rem;
+  }
+  .alert-header + .alert-content {
+    margin-top: var(--space-2);
   }
   .alert.info {
     background-color: var(--color-info-50);
