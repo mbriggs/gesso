@@ -14,11 +14,25 @@ document.addEventListener("click", (event) => {
   input.dispatchEvent(new Event("change", { bubbles: true }));
 });
 
-document.addEventListener("change", (event) => {
-  const input = event.target.closest("[data-ui-toggle-input]");
-  if (!input) return;
-
+function syncFace(input) {
   const button = input.closest("[data-ui-toggle]")?.querySelector("[data-ui-toggle-switch]");
   if (!button) return;
   button.setAttribute("aria-checked", input.checked ? "true" : "false");
+}
+
+document.addEventListener("change", (event) => {
+  const input = event.target.closest("[data-ui-toggle-input]");
+  if (input) syncFace(input);
+});
+
+// Reset reverts checkbox state without firing change on each control;
+// re-sync the faces after the values have reverted.
+document.addEventListener("reset", (event) => {
+  const form = event.target;
+  if (!(form instanceof HTMLFormElement)) return;
+  setTimeout(() => {
+    for (const input of form.querySelectorAll("[data-ui-toggle-input]")) {
+      syncFace(input);
+    }
+  }, 0);
 });
