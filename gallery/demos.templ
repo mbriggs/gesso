@@ -725,8 +725,17 @@ templ designProductTableInner() {
 templ designDemoPageHeader() {
 	<div class="stack gap-lg">
 		@ui.Card(ui.CardProps{Padded: true, Content: designPageHeaderCard()})
+		@ui.Card(ui.CardProps{Padded: true, Content: designSectionHeadCard()})
 		@ui.Card(ui.CardProps{Padded: true, Content: designEmptyStateCard()})
 	</div>
+}
+
+templ designSectionHeadCard() {
+	@ui.SectionHead(ui.SectionHeadProps{
+		Title:   "Option types",
+		Actions: ui.SectionLink(ui.SectionLinkProps{Href: "#page-header", Text: "Edit options"}),
+	})
+	<p class="muted">A section link is the standard way out of a section to its related page — always visible, unlike hover-revealed section actions.</p>
 }
 
 templ designPageHeaderCard() {

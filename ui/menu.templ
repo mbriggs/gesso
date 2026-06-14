@@ -6,7 +6,7 @@ templ Menu(p MenuProps) {
 			if p.TriggerContent != nil {
 				@p.TriggerContent
 			} else {
-				...
+				@Icon(IconKebab, "")
 			}
 		</summary>
 		<div class={ Class("menu-panel", menuPlacement(p.Placement), p.PanelClass) } role="menu" aria-label={ p.TriggerLabel }>

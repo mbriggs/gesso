@@ -80,6 +80,16 @@ templ SectionHead(p SectionHeadProps) {
 	</header>
 }
 
+// SectionLink is the standard navigation link for a section head's Actions
+// slot: a quiet primary "label →". Unlike action buttons, it stays visible
+// without hover — it leads somewhere, so it must be discoverable.
+templ SectionLink(p SectionLinkProps) {
+	<a class={ Class("section-link", p.Class) } href={ templpkg.SafeURL(p.Href) }>
+		{ p.Text }
+		<span class="section-link-arrow" aria-hidden="true">→</span>
+	</a>
+}
+
 templ EmptyState(p EmptyStateProps) {
 	<div class={ Class("empty-state", stringDefault(p.Spacing, "default") + "-spacing", p.Class) }>
 		if p.Icon != nil {

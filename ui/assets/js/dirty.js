@@ -5,13 +5,16 @@
 // every count change dispatches a bubbling "ui:dirty-change" CustomEvent
 // with { form, dirty, count }, and leaving the page warns. Submitting or
 // resetting the form stands down. After programmatic edits, dispatch a
-// bubbling "change" on the form to force re-evaluation.
+// bubbling "change" on the form to force re-evaluation. Controls marked
+// [data-ui-dirty-ignore] are never tracked — UI-only inputs (filter
+// boxes) that live inside the form but aren't part of its payload.
 const skippedTypes = new Set(["button", "submit", "reset", "image", "fieldset", "output"]);
 const lastCount = new WeakMap();
 const submitting = new WeakSet();
 
 function isTracked(control) {
   if (!control.type || skippedTypes.has(control.type)) return false;
+  if (control.hasAttribute("data-ui-dirty-ignore")) return false;
   if (control.type === "hidden" && !control.hasAttribute("data-baseline-value")) return false;
   return true;
 }

@@ -249,4 +249,12 @@
     color: var(--color-danger-400);
   }
 
+  /* Section links */
+  html.is-dark .section-link {
+    color: var(--color-primary-400);
+  }
+  html.is-dark .section-link:hover {
+    color: var(--color-primary-300);
+  }
+
 }

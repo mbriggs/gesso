@@ -127,11 +127,14 @@
     gap: var(--space-1);
   }
   /* Quiet uppercase wordmark (Bulkhead parity) — the brand reads as a
-     label, not a logo; the prefix sits muted beside the name. */
+     label, not a logo; the prefix sits muted beside the name. Indented to
+     line up with the nav items' inner content, which starts one item-pad
+     further in than the header row. */
   .shell-sidebar-brand {
     display: inline-flex;
     align-items: baseline;
     gap: var(--space-1);
+    padding-inline-start: var(--space-2);
     color: var(--sidebar-text-1);
     font-size: 0.875rem;
     line-height: 1.25rem;

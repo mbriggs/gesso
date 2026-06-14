@@ -3,17 +3,14 @@
 @layer components {
   /* Auth surface
    *
-   * Cool cyan/indigo gradient against a deep-slate backdrop. The surface
-   * is intentionally dark in both themes — these token overrides scope
-   * the dark palette to this subtree so the card and its children sit
-   * dark on the gradient without clobbering the app shell's tokens. */
+   * Cool cyan/indigo gradient wash. The surface follows the app theme:
+   * light by default (pastel wash over the light shell surface), and the
+   * original deep-slate treatment under html.is-dark. Card and text colors
+   * ride the semantic tokens, so only the backdrop, glows, and the few
+   * dark-divergent tints below need explicit is-dark overrides. */
 
   .auth-page {
-    --surface-1: var(--color-zinc-800);
-    --text-1: var(--color-zinc-100);
-    --text-2: var(--color-zinc-300);
-    --text-muted: var(--color-zinc-400);
-    --border-1: var(--color-zinc-700);
+    --auth-glow-opacity: 0.35;
 
     position: relative;
     min-height: 100dvh;
@@ -23,7 +20,29 @@
     justify-content: center;
     gap: var(--space-6);
     padding: var(--space-12) var(--space-5);
-    color: var(--color-zinc-100);
+    color: var(--text-1);
+    background:
+      radial-gradient(
+        1200px 600px at 50% -10%,
+        color-mix(in oklab, var(--color-info-300) 28%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        900px 600px at 110% 110%,
+        color-mix(in oklab, var(--color-primary-300) 30%, transparent),
+        transparent 65%
+      ),
+      radial-gradient(
+        900px 600px at -10% 110%,
+        color-mix(in oklab, var(--color-emerald-300, var(--color-emerald-500)) 20%, transparent),
+        transparent 60%
+      ),
+      var(--surface-2);
+    overflow: hidden;
+  }
+  html.is-dark .auth-page {
+    --auth-glow-opacity: 0.5;
+
     background:
       radial-gradient(
         1200px 600px at 50% -10%,
@@ -41,45 +60,60 @@
         transparent 60%
       ),
       #0b0b14;
-    overflow: hidden;
   }
 
   .auth-page::before {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--color-zinc-900) 6%, transparent) 1px,
+      transparent 1px
+    );
     background-size: 28px 28px;
     mask-image: radial-gradient(ellipse at center, black 35%, transparent 75%);
     pointer-events: none;
     z-index: 0;
   }
+  html.is-dark .auth-page::before {
+    background-image: radial-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  }
 
+  /* Glows: softer 300-shades in light so they read as a pastel wash;
+     is-dark restores the saturated 500s. Opacity rides the page-level
+     custom property so the entrance keyframe lands on the right value
+     in both themes. */
   .auth-glow {
     position: absolute;
     width: 36rem;
     height: 36rem;
     border-radius: 9999px;
     filter: blur(80px);
-    opacity: 0.5;
+    opacity: var(--auth-glow-opacity);
     pointer-events: none;
     z-index: 0;
   }
   .auth-glow.indigo {
     top: -12rem;
     right: -8rem;
-    background: radial-gradient(closest-side, var(--color-primary-500), transparent 70%);
+    background: radial-gradient(closest-side, var(--color-primary-300), transparent 70%);
     animation:
       auth-glow-in 1100ms var(--ease-out) 80ms both,
       auth-drift 14s ease-in-out 1100ms infinite;
   }
+  html.is-dark .auth-glow.indigo {
+    background: radial-gradient(closest-side, var(--color-primary-500), transparent 70%);
+  }
   .auth-glow.cyan {
     bottom: -16rem;
     left: -10rem;
-    background: radial-gradient(closest-side, var(--color-info-500), transparent 70%);
+    background: radial-gradient(closest-side, var(--color-info-300), transparent 70%);
     animation:
       auth-glow-in 1300ms var(--ease-out) 160ms both,
       auth-drift 18s ease-in-out 1300ms infinite reverse;
+  }
+  html.is-dark .auth-glow.cyan {
+    background: radial-gradient(closest-side, var(--color-info-500), transparent 70%);
   }
 
   @keyframes auth-drift {
@@ -96,7 +130,7 @@
       opacity: 0;
     }
     to {
-      opacity: 0.5;
+      opacity: var(--auth-glow-opacity);
     }
   }
   @keyframes auth-card-in {
@@ -129,11 +163,18 @@
     -webkit-backdrop-filter: blur(24px) saturate(160%);
     color: var(--text-1);
     box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--color-zinc-900) 8%, transparent),
+      inset 0 1px 0 rgb(255 255 255 / 0.8),
+      0 30px 60px -20px color-mix(in oklab, var(--color-zinc-900) 25%, transparent),
+      0 0 90px -30px var(--color-primary-300);
+    animation: auth-card-in 600ms var(--ease-out) 120ms both;
+  }
+  html.is-dark .auth-card {
+    box-shadow:
       0 0 0 1px color-mix(in oklab, white 14%, transparent),
       inset 0 1px 0 rgb(255 255 255 / 0.5),
       0 30px 60px -20px rgb(0 0 0 / 0.5),
       0 0 90px -30px var(--color-primary-500);
-    animation: auth-card-in 600ms var(--ease-out) 120ms both;
   }
   @supports not (backdrop-filter: blur(1px)) {
     .auth-card {
@@ -236,23 +277,30 @@
   }
 
   /* In-card flash — terser than a full Alert so it fits the card rhythm.
-     Default styling is the failure beat; `.ok` is the success one. The
-     auth surface is always dark, so these use the dark-leaning colors
-     unconditionally. */
+     Default styling is the failure beat; `.ok` is the success one. Tints
+     follow the theme: 700-text on a light card, 300-text on the dark one. */
   .auth-card-flash {
     margin: 0 0 var(--space-4);
     padding: var(--space-2) var(--space-3);
     border-radius: 0.5rem;
     font-size: var(--text-sm);
     line-height: var(--text-sm--line-height);
-    color: var(--color-danger-300);
-    background: color-mix(in oklab, var(--color-danger-500) 10%, transparent);
+    color: var(--color-danger-700);
+    background: color-mix(in oklab, var(--color-danger-500) 8%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-danger-500) 25%, transparent);
   }
   .auth-card-flash.ok {
+    color: var(--color-success-700);
+    background: color-mix(in oklab, var(--color-success-500) 8%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-success-500) 25%, transparent);
+  }
+  html.is-dark .auth-card-flash {
+    color: var(--color-danger-300);
+    background: color-mix(in oklab, var(--color-danger-500) 10%, transparent);
+  }
+  html.is-dark .auth-card-flash.ok {
     color: var(--color-success-300);
     background: color-mix(in oklab, var(--color-success-500) 10%, transparent);
-    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-success-500) 25%, transparent);
   }
 
   .auth-card-footer {
@@ -261,8 +309,11 @@
     font-size: var(--text-sm);
   }
   .auth-card-footer a {
-    color: var(--color-primary-400);
+    color: var(--color-primary-600);
     font-weight: 500;
+  }
+  html.is-dark .auth-card-footer a {
+    color: var(--color-primary-400);
   }
   .auth-card-footer a:hover {
     text-decoration: underline;

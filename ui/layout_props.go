@@ -40,6 +40,12 @@ type SectionHeadProps struct {
 	Actions templ.Component
 }
 
+type SectionLinkProps struct {
+	Href  string
+	Text  string
+	Class string
+}
+
 type EntityTileProps struct {
 	ID        string
 	Href      string
